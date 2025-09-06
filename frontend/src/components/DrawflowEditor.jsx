@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Drawflow from 'drawflow';
 import 'drawflow/dist/drawflow.min.css';
 import './DrawflowEditor.css';
+import { checkRules } from './rules';
 import ResultSection from './ResultSection';
 
 const DrawflowEditor = () => {
@@ -66,9 +67,43 @@ const DrawflowEditor = () => {
       console.log("Module Changed " + name);
     });
 
-    editor.on("connectionCreated", (connection) => {
-      console.log("Connection created");
+    // editor.on("connectionCreated", (connection) => {
+    //   console.log("Connection created");
+    //   console.log(connection);
+    // });
+
+    editor.on('connectionCreated', function(connection) {
+      console.log('Connection created');
       console.log(connection);
+
+      // Get the nodes involved in the connection
+      const outputNode = editor.getNodeFromId(connection.output_id);
+      const inputNode = editor.getNodeFromId(connection.input_id);
+      
+      console.log(`Attempting to connect ${outputNode.name} to ${inputNode.name}`);
+
+      // Check if connection is allowed using rules.js
+      if (checkRules(
+                editor,
+                outputNode.name, 
+                inputNode.name,
+                connection.output_id,
+                connection.input_id
+            ) == false) {
+
+        console.log("Connection not allowed by rules");
+        // Remove the invalid connection
+        editor.removeSingleConnection(
+                connection.output_id,
+                connection.input_id, 
+                connection.output_class,
+                connection.input_class
+            );
+        
+        alert(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`);
+        // Show feedback to user
+        console.log(`Connection blocked: ${outputNode.name} cannot connect to ${inputNode.name}`);
+      }
     });
 
     editor.on("connectionRemoved", (connection) => {
@@ -76,29 +111,29 @@ const DrawflowEditor = () => {
       console.log(connection);
     });
 
-    editor.on("mouseMove", (position) => {
-      console.log("Position mouse x:" + position.x + " y:" + position.y);
-    });
+    // editor.on("mouseMove", (position) => {
+    //   console.log("Position mouse x:" + position.x + " y:" + position.y);
+    // });
 
-    editor.on("nodeMoved", (id) => {
-      console.log("Node moved " + id);
-    });
+    // editor.on("nodeMoved", (id) => {
+    //   console.log("Node moved " + id);
+    // });
 
-    editor.on("zoom", (zoom) => {
-      console.log("Zoom level " + zoom);
-    });
+    // editor.on("zoom", (zoom) => {
+    //   console.log("Zoom level " + zoom);
+    // });
 
-    editor.on("translate", (position) => {
-      console.log("Translate x:" + position.x + " y:" + position.y);
-    });
+    // editor.on("translate", (position) => {
+    //   console.log("Translate x:" + position.x + " y:" + position.y);
+    // });
 
-    editor.on("addReroute", (id) => {
-      console.log("Reroute added " + id);
-    });
+    // editor.on("addReroute", (id) => {
+    //   console.log("Reroute added " + id);
+    // });
 
-    editor.on("removeReroute", (id) => {
-      console.log("Reroute removed " + id);
-    });
+    // editor.on("removeReroute", (id) => {
+    //   console.log("Reroute removed " + id);
+    // });
   };
 
   const handleDragStart = (e, nodeType) => {
@@ -176,7 +211,7 @@ const DrawflowEditor = () => {
             </div>
           </div>
         `;
-        editor.addNode("se", 1, 1, pos_x, pos_y, "se", {}, se);
+        editor.addNode("se", 0, 1, pos_x, pos_y, "se", {}, se);
         break;
       }
 
@@ -188,7 +223,7 @@ const DrawflowEditor = () => {
             </div>
           </div>
         `;
-        editor.addNode("sf", 1, 1, pos_x, pos_y, "sf", {}, sf);
+        editor.addNode("sf", 0, 1, pos_x, pos_y, "sf", {}, sf);
         break;
       }
 
