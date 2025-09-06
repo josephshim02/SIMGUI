@@ -11,6 +11,7 @@ const DrawflowEditor = () => {
   const [currentModule, setCurrentModule] = useState('Home');
   const [isLocked, setIsLocked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [currDomain, setCurrDomain] = useState(null);
 
   useEffect(() => {
     if (drawflowRef.current && !editorRef.current) {
@@ -366,25 +367,59 @@ const DrawflowEditor = () => {
     }
   };
 
-  const nodeTypes = [
-    { type: "f_store", symbol: "I", label: "Inertia" },
-    { type: "e_store", symbol: "C", label: "Capacitance" },
-    { type: "re", symbol: "R", label: "Resistance" },
-    { type: "se", symbol: "Se", label: "SE" },
-    { type: "sf", symbol: "Sf", label: "SF" },
-    { type: "f_junc", symbol: "1", label: "1" },
-    { type: "e_junc", symbol: "0", label: "0" },
+
+  const domainOptions = [
+    { name: "Mechanical (Translational)", f_store: "Mass",                 e_store: "Spring",                 se: "Force",               sf: "Velocity" },
+    { name: "Mechanical (Rotational)",    f_store: "Moment of Inertia",    e_store: "Torsional Spring",       se: "Torque",              sf: "Angular Velocity" },
+    { name: "Electrical",                  f_store: "Inductor",             e_store: "Capacitor",              se: "Voltage Source",      sf: "Current Source" },
+    { name: "Fluid",                       f_store: "Fluid Inertia",        e_store: "Compliance",             se: "Pressure Source",     sf: "Flow Source" },
+    { name: "Chemical",                    e_store: "Species Concentration",  se: "Chemical Potential Source", sf: "Reaction Rate Source" },
   ];
+
+  const baseNodeTypes = [
+    { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
+    { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
+    { type: "re", symbol: "R", defaultLabel: "Resistance" },
+    { type: "se", symbol: "Se", defaultLabel: "SE" },
+    { type: "sf", symbol: "Sf", defaultLabel: "SF" },
+    { type: "f_junc", symbol: "1", defaultLabel: "1" },
+    { type: "e_junc", symbol: "0", defaultLabel: "0" },
+  ];
+
+  const getLabel = (type) => {
+    if (!currDomain) {
+      return baseNodeTypes.find(n => n.type === type)?.defaultLabel ?? type;
+    }
+    
+    return currDomain[type]
+      ?? baseNodeTypes.find(n => n.type === type)?.defaultLabel
+      ?? type;
+  };
+
 
   return (
     <div className="drawflow-app">
       <header>
         <h2>Drawflow</h2>
+
+        <select
+        value={currDomain?.name ?? ""}
+        onChange={(e) => {
+          const d = domainOptions.find(x => x.name === e.target.value);
+          setCurrDomain(d ?? null);
+        }}
+        style={{ marginLeft: 12 }}
+        >
+          <option value="">-- Select Domain --</option>
+          {domainOptions.map(d => (
+            <option key={d.name} value={d.name}>{d.name}</option>
+          ))}
+        </select>
       </header>
       
       <div className="wrapper">
         <div className="col">
-          {nodeTypes.map((node) => (
+          {baseNodeTypes.map((node) => (
             <div
               key={node.type}
               className="drag-drawflow"
@@ -392,7 +427,7 @@ const DrawflowEditor = () => {
               onDragStart={(e) => handleDragStart(e, node.type)}
             >
               <span className="node-symbol">{node.symbol}</span>
-              <span> {node.label}</span>
+              <span> {getLabel(node.type)}</span>
             </div>
           ))}
         </div>
