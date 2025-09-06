@@ -67,7 +67,8 @@ const DrawflowEditor = () => {
     editor.on("moduleChanged", (name) => {
       console.log("Module Changed " + name);
     });
-    editor.on('connectionCreated', function(connection) {
+
+    editor.on('connectionCreated', (connection) => {
 
       // Get the nodes involved in the connection
       const outputNode = editor.getNodeFromId(connection.output_id);
@@ -159,142 +160,75 @@ const DrawflowEditor = () => {
     pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
             editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom));
 
-    switch (name) {
-      case "f_store": {
-        const fStore = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">I</span> Inertia 
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("f_store", 1, 1, pos_x, pos_y, "f_store", {}, fStore);
-        break;
-      }
+    
+    // format of origin addNode: editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
 
-      case "e_store": {
-        const eStore = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">C</span> Capacitance
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("e_store", 1, 1, pos_x, pos_y, "e_store", {}, eStore);
-        break;
-      }
+    // meta about node: io = [inputs, outputs]；body = 'param' | 'source' | 'none'
+    const makeMeta = (symbol, io, className, body) =>
+      ({ symbol, inputs: io[0], outputs: io[1], className, body });
 
-      case "re": {
-        const re = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">R</span> Resistance
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("re", 1, 1, pos_x, pos_y, "re", {}, re);
-        break;
-      }
+    // preset 7 type of nodes, make those as objects where omit the fields
+    const NODE_META = {
+      // Parameter-type: 1 in, 1 out, with parameter
+      f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
+      e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
+      re:      makeMeta('R',  [1,1], 're',      'param'),
 
-      case "se": {
-        const se = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">Se</span> SE
-            </div>
-            <div class="box">
-            <p>Input Type:</p>
-            <select df-input-type 
-                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
-                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-              <option param="unit-step">Unit Step Input</option>
-              <option param="sinusoidal">Sinusoidal Input</option>
-              <option param="square-wave">Square Wave Input</option>
-              <option param="impulse">Impulse Input</option>
-            </select>
-          </div>
-          </div>
-        `;
-        editor.addNode("se", 0, 1, pos_x, pos_y, "se", {}, se);
-        break;
-      }
+      // Source-type: only 1 out, with source
+      se:      makeMeta('Se', [0,1], 'se',      'source'),
+      sf:      makeMeta('Sf', [0,1], 'sf',      'source'),
 
-      case "sf": {
-        const sf = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">Sf</span> SF
-            </div>
-            <div class="box">
-            <p>Input Type:</p>
-            <select df-input-type 
-                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
-                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-              <option param="unit-step">Unit Step Input</option>
-              <option param="sinusoidal">Sinusoidal Input</option>
-              <option param="square-wave">Square Wave Input</option>
-              <option param="impulse">Impulse Input</option>
-            </select>
-          </div>
-          </div>
-        `;
-        editor.addNode("sf", 0, 1, pos_x, pos_y, "sf", {}, sf);
-        break;
-      }
+      // Junction-type: 1 in 1 out, no inner form
+      f_junc:  makeMeta('1',  [1,1], 'f_junc',  'none'),
+      e_junc:  makeMeta('0',  [1,1], 'e_junc',  'none'),
+    };
 
-      case "f_junc": {
-        const fJunc = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">1</span>1
-            </div>
-          </div>
-        `;
-        editor.addNode("f_junc", 1, 1, pos_x, pos_y, "f_junc", {}, fJunc);
-        break;
-      }
+    // wrap of nodes, where each symbol has letter in a circle, have title and inner HTML
+    const wrap = (symbol, title, inner = '') => `
+      <div>
+        <div class="title-box">
+          <span class="node-symbol">${symbol}</span> ${title}
+        </div>
+        ${inner ? `<div class="box">${inner}</div>` : ''}
+      </div>
+    `;
 
-      case "e_junc": {
-        const eJunc = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">0</span>0 
-            </div>
-          </div>
-        `;
-        editor.addNode("e_junc", 1, 1, pos_x, pos_y, "e_junc", {}, eJunc);
-        break;
-      }
+    const ParamField = 
+    `<p>Param:</p>
+    <input type="number"
+      step="any" df-param placeholder="0.0"
+      style="width:80px;padding:2px;margin:2px;border:1px solid #ccc;border-radius:3px;"
+      onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.value)">
+    `;
 
-      default:
-        break;
+    const SourceField =
+    `<p>Input Type:</p>
+    <select df-input-type
+      style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
+      onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
+        <option param="unit-step">Unit Step Input</option>
+        <option param="sinusoidal">Sinusoidal Input</option>
+        <option param="square-wave">Square Wave Input</option>
+        <option param="impulse">Impulse Input</option>
+    </select>
+    `;
+
+    // render inner HTML using meta data
+    const renderNodeHTML = (name, meta, getLabel) => {
+      const inner = meta.body === 'param'  ? ParamField
+                  : meta.body === 'source' ? SourceField
+                  : '';
+      return wrap(meta.symbol, getLabel(name), inner);
+    };
+
+    const m = NODE_META[name];
+    if (m) {
+      const html = renderNodeHTML(name, m, getLabel);
+      editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
+      return;
+    } else {
+      console.warn('Unknown node type:', name);
+      return;
     }
   };
 
