@@ -17,21 +17,48 @@ using JSON
 export convert_drawflow_to_bondgraph, simulate_bondgraph, plot_bondgraph, plot_simulation, save_solution_json
 
 """
-    convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
+    convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bool=true)
 
-Convert a Drawflow JSON file to a BondGraph model.
+Convert Drawflow JSON data to a BondGraph model.
 
 # Arguments
-- `json_file::String`: Path to the Drawflow JSON file
+- `json_data::Dict{String, Any}`: Drawflow JSON data as a dictionary (from frontend or parsed JSON file)
 - `verbose::Bool`: Whether to print detailed output (default: true)
 
 # Returns
 - `bg::BondGraph`: The converted BondGraph model
 - `drawflow_data::Dict`: The original JSON data with added component references
 
-# Example
+# Examples
 ```julia
-bg, data = convert_drawflow_to_bondgraph("test.json")
+# From parsed JSON data (recommended for web applications)
+json_data = JSON.parsefile("test.json")
+bg, data = convert_drawflow_to_bondgraph(json_data)
+
+# From frontend Drawflow export
+bg, data = convert_drawflow_to_bondgraph(drawflow_export_data)
+```
+
+# Note
+This function expects the JSON data to have the structure:
+```json
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "node_id": {
+          "id": 1,
+          "name": "component_name",
+          "class": "component_class",
+          "inputs": {...},
+          "outputs": {...},
+          "pos_x": 100,
+          "pos_y": 200
+        }
+      }
+    }
+  }
+}
 ```
 """
 function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bool=true)
@@ -48,9 +75,6 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
         println("=" ^ 50)
     end
 
-    if !isfile(json_file)
-        error("JSON file not found: $json_file")
-    end
 
     drawflow_data = json_data["drawflow"]["Home"]["data"]
 
@@ -77,11 +101,11 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
     function create_component(node_id, node_class, node_name)
         if node_class == "f_store"
             component = Component(:I, "I_$node_id")
-            component.I = 2.0  # Set inertia parameter
+            # component.I = 2.0  # Set inertia parameter
             return component
         elseif node_class == "e_store"
             component = Component(:C, "C_$node_id")
-            component.C = 2.0  # Set capacitance parameter
+            # component.C = 2.0  # Set capacitance parameter
             return component
         elseif node_class == "re"
             component = Component(:Re, "R_$node_id")
@@ -94,7 +118,7 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
             return Component(:Se, "Se_$node_id")
         elseif node_class == "sf"
             component = Component(:Sf, "Sf_$node_id")
-            component.fs = t -> sin(2t)  # Set source flow function
+            # component.fs = t -> sin(2t)  # Set source flow function
             return component
         else
             if verbose
