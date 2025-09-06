@@ -72,16 +72,31 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
 
     # Node type to BondGraph component mapping
     function create_component(node_id, node_class, node_name)
+        # println("HELLLOOOOOO")
+        # println(BondGraphs.DEFAULT_LIBRARY)
+        # println("HELLLOOOOOO")
+        # println((BondGraphs.description(Component(:I))))
+        # println("passed")
+        # println((BondGraphs.description(Component(:C, "C_$node_id"))))
+        # println("HELLLOOOOOO")
+        # println((BondGraphs.description(Component(:R, "R_$node_id"))))
+        # println("HELLLOOOOOO")
+        # println((BondGraphs.description(Component(:Se, "Se_$node_id"))))
+        # println("HELLLOOOOOO")
+        # println((BondGraphs.description(Component(:Sf, "Sf_$node_id"))))
+        # print("done")
         if node_class == "f_store"
             component = Component(:I, "I_$node_id")
-            # component.I = 2.0  # Set inertia parameter
+            # println(typeof(component))
+            # println(description(component))
+            # component.I = 10.0  # Set inertia parameter
             return component
         elseif node_class == "e_store"
             component = Component(:C, "C_$node_id")
             # component.C = 2.0  # Set capacitance parameter
             return component
         elseif node_class == "re"
-            component = Component(:Re, "R_$node_id")
+            component = Component(:R, "R_$node_id")
             return component
         elseif node_class == "e_junc"
             return EqualEffort()

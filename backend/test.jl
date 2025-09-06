@@ -10,8 +10,19 @@ using .DrawflowToBondGraph
 println("=== Testing DrawflowToBondGraph Module ===")
 println()
 
+using JSON
+
+data = JSON.parsefile("test.json")
+
+println(data)
+
 # Convert JSON to BondGraph
-bg, data = convert_drawflow_to_bondgraph("test.json", verbose=true)
+bg, data = convert_drawflow_to_bondgraph(data, verbose=true)
+
+# remove test_bondgraph.png
+rm("test_bondgraph.png")
+rm("test_simulation.png")
+rm("test_solution.json")
 
 # Plot the BondGraph
 plot_bondgraph(bg, filename="test_bondgraph.png", title="Test BondGraph")
