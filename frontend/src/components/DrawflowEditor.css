@@ -224,6 +224,50 @@
     width: 200px;
 }
 
+.drawflow .drawflow-node .box {
+  padding: 8px;
+  margin: 4px 0;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.drawflow .drawflow-node .box p {
+  margin: 0 0 4px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.drawflow .drawflow-node .box input[type="number"] {
+  width: 80px;
+  padding: 4px 6px;
+  margin: 0;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  font-size: 12px;
+  background: white;
+  color: #495057;
+  outline: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.drawflow .drawflow-node .box input[type="number"]:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.drawflow .drawflow-node .box input[type="number"]:invalid {
+  border-color: #dc3545;
+}
+
+/* Make nodes slightly larger to accommodate inputs */
+.drawflow .drawflow-node[data-node="f_store"],
+.drawflow .drawflow-node[data-node="e_store"],
+.drawflow .drawflow-node[data-node="re"] {
+  min-width: 120px;
+}
+
 .drawflow .drawflow-node.selected {
     background: white;
     border: 1px solid #4ea9ff;
