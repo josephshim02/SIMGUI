@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import Drawflow from 'drawflow';
 import 'drawflow/dist/drawflow.min.css';
 import './DrawflowEditor.css';
+import ResultSection from './ResultSection';
 
 const DrawflowEditor = () => {
   const drawflowRef = useRef(null);
   const editorRef = useRef(null);
   const [currentModule, setCurrentModule] = useState('Home');
   const [isLocked, setIsLocked] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (drawflowRef.current && !editorRef.current) {
@@ -302,16 +304,6 @@ const DrawflowEditor = () => {
     <div className="drawflow-app">
       <header>
         <h2>Drawflow</h2>
-        <div className="github-link">
-          <a href="https://github.com/jerosoler/Drawflow" target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-github fa-3x"></i>
-          </a>
-        </div>
-        <div className="them-edit-link">
-          <a href="https://jerosoler.github.io/drawflow-theme-generator/" target="_blank" rel="noopener noreferrer">
-            🎨
-          </a>
-        </div>
       </header>
       
       <div className="wrapper">
@@ -329,7 +321,7 @@ const DrawflowEditor = () => {
           ))}
         </div>
         
-        <div className="col-right">
+        <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
               <li
@@ -369,6 +361,7 @@ const DrawflowEditor = () => {
             </div>
           </div>
         </div>
+        <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} />
       </div>
     </div>
   );

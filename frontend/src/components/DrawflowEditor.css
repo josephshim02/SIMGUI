@@ -94,7 +94,7 @@
   display: block;
   background: white;
   width: 100%;
-  z-index: 10;
+  z-index: 1;
 }
 
 .menu ul {
@@ -116,11 +116,11 @@
   font-weight: bold;
 }
 
+/* toolbar buttons moved to left side (previously positioned on the right) */
 .btn-export {
-  float: right;
   position: absolute;
   top: 10px;
-  right: 10px;
+  left: 10px;
   color: white;
   font-weight: bold;
   border: 1px solid #0e5ba3;
@@ -132,10 +132,9 @@
 }
 
 .btn-clear {
-  float: right;
   position: absolute;
   top: 10px;
-  right: 85px;
+  left: 100px; /* spacing from export */
   color: white;
   font-weight: bold;
   border: 1px solid #96015b;
@@ -147,10 +146,9 @@
 }
 
 .btn-lock {
-  float: right;
   position: absolute;
   bottom: 10px;
-  right: 140px;
+  left: 170px; /* place lock to the right of the zoom bar */
   display: flex;
   font-size: 24px;
   color: white;
@@ -163,10 +161,9 @@
 }
 
 .bar-zoom {
-  float: right;
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  left: 10px; /* bottom-left corner */
   display: flex;
   font-size: 24px;
   color: white;
@@ -472,8 +469,36 @@
   color: #333;
 }
 
-@media only screen and (max-width: 768px) {
-  .modal-content {
-    width: 80%;
+.col-right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: calc(100vw - 301px);
+  transition: width 220ms ease;
+  min-width: 320px;
+}
+
+.col-right.with-result {
+  width: calc(100vw - 301px - 500px);
+}
+
+.col-right #drawflow {
+  width: 100%;
+  height: calc(100% - 50px);
+  transition: width 220ms ease, height 220ms ease;
+}
+
+@media only screen and (max-width: 900px) {
+  .col {
+    width: 60px;
+  }
+  .col-right {
+    width: calc(100vw - 61px);
+  }
+  .col-right.with-result {
+    width: calc(100vw - 61px - 500px);
+  }
+  .col-right #drawflow {
+    height: calc(100% - 50px);
   }
 }

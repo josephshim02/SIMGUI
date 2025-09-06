@@ -1,0 +1,40 @@
+.result-section {
+    width: 500px;
+    height: calc(100vh - 66px); /* leave space for header (66px) */
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.12);
+    padding: 24px;
+    position: fixed;
+    right: 0;
+    top: 66px;
+    z-index: 1000;
+    transition: transform 220ms ease, opacity 220ms ease;
+    will-change: transform, opacity;
+}
+
+.result-image {
+    width: 100%;
+    height: calc(100% - 48px);
+    object-fit: contain;
+}
+
+.toggle-button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    right: 520px; /* 500px panel + 20px gutter (when panel present) */
+    z-index: 1100;
+    transition: right 220ms ease;
+}
+
+/* fallback: on narrow screens move the toggle button closer to right edge */
+@media (max-width: 900px) {
+  .toggle-button {
+    right: 20px;
+  }
+}
