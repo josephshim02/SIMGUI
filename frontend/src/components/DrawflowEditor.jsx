@@ -173,6 +173,15 @@ const DrawflowEditor = () => {
             <div class="title-box">
               <span class="node-symbol">I</span> Inertia 
             </div>
+            <div class="box">
+            <p>Param:</p>
+            <input type="number" 
+                   step="any" 
+                   df-param 
+                   placeholder="0.0"
+                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
+                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
+            </div>
           </div>
         `;
         editor.addNode("f_store", 1, 1, pos_x, pos_y, "f_store", {}, fStore);
@@ -184,6 +193,15 @@ const DrawflowEditor = () => {
           <div>
             <div class="title-box">
               <span class="node-symbol">C</span> Capacitance
+            </div>
+            <div class="box">
+            <p>Param:</p>
+            <input type="number" 
+                   step="any" 
+                   df-param 
+                   placeholder="0.0"
+                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
+                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
             </div>
           </div>
         `;
@@ -197,6 +215,15 @@ const DrawflowEditor = () => {
             <div class="title-box">
               <span class="node-symbol">R</span> Resistance
             </div>
+            <div class="box">
+            <p>Param:</p>
+            <input type="number" 
+                   step="any" 
+                   df-param 
+                   placeholder="0.0"
+                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
+                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
+            </div>
           </div>
         `;
         editor.addNode("re", 1, 1, pos_x, pos_y, "re", {}, re);
@@ -209,6 +236,17 @@ const DrawflowEditor = () => {
             <div class="title-box">
               <span class="node-symbol">Se</span> SE
             </div>
+            <div class="box">
+            <p>Input Type:</p>
+            <select df-input-type 
+                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
+                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
+              <option param="unit-step">Unit Step Input</option>
+              <option param="sinusoidal">Sinusoidal Input</option>
+              <option param="square-wave">Square Wave Input</option>
+              <option param="impulse">Impulse Input</option>
+            </select>
+          </div>
           </div>
         `;
         editor.addNode("se", 0, 1, pos_x, pos_y, "se", {}, se);
@@ -221,6 +259,17 @@ const DrawflowEditor = () => {
             <div class="title-box">
               <span class="node-symbol">Sf</span> SF
             </div>
+            <div class="box">
+            <p>Input Type:</p>
+            <select df-input-type 
+                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
+                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
+              <option param="unit-step">Unit Step Input</option>
+              <option param="sinusoidal">Sinusoidal Input</option>
+              <option param="square-wave">Square Wave Input</option>
+              <option param="impulse">Impulse Input</option>
+            </select>
+          </div>
           </div>
         `;
         editor.addNode("sf", 0, 1, pos_x, pos_y, "sf", {}, sf);
