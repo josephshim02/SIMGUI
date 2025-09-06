@@ -47,88 +47,16 @@ const DrawflowEditor = () => {
     };
   }, []);
 
-  const setupEventListeners = (editor) => {
-    editor.on("nodeCreated", (id) => {
-      console.log("Node created " + id);
-    });
-
-    editor.on("nodeRemoved", (id) => {
-      console.log("Node removed " + id);
-    });
-
-    editor.on("nodeSelected", (id) => {
-      console.log("Node selected " + id);
-    });
-
-    editor.on("moduleCreated", (name) => {
-      console.log("Module Created " + name);
-    });
-
-    editor.on("moduleChanged", (name) => {
-      console.log("Module Changed " + name);
-    });
-
-    editor.on('connectionCreated', (connection) => {
-
-      // Get the nodes involved in the connection
-      const outputNode = editor.getNodeFromId(connection.output_id);
-      const inputNode = editor.getNodeFromId(connection.input_id);
-      
-      console.log(`Attempting to connect ${outputNode.name} to ${inputNode.name}`);
-
-      // Check if connection is allowed using rules.js
-      if (checkRules(
-                editor,
-                outputNode.name, 
-                inputNode.name,
-                connection.output_id,
-                connection.input_id
-            ) == false) {
-
-        console.log("Connection not allowed by rules");
-        // Remove the invalid connection
-        editor.removeSingleConnection(
-                connection.output_id,
-                connection.input_id, 
-                connection.output_class,
-                connection.input_class
-            );
-        
-        alert(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`);
-        // Show feedback to user
-        console.log(`Connection blocked: ${outputNode.name} cannot connect to ${inputNode.name}`);
-      }
-    });
-
-    editor.on("connectionRemoved", (connection) => {
-      console.log("Connection removed");
-      console.log(connection);
-    });
-
-    // editor.on("mouseMove", (position) => {
-    //   console.log("Position mouse x:" + position.x + " y:" + position.y);
-    // });
-
-    // editor.on("nodeMoved", (id) => {
-    //   console.log("Node moved " + id);
-    // });
-
-    // editor.on("zoom", (zoom) => {
-    //   console.log("Zoom level " + zoom);
-    // });
-
-    // editor.on("translate", (position) => {
-    //   console.log("Translate x:" + position.x + " y:" + position.y);
-    // });
-
-    // editor.on("addReroute", (id) => {
-    //   console.log("Reroute added " + id);
-    // });
-
-    // editor.on("removeReroute", (id) => {
-    //   console.log("Reroute removed " + id);
-    // });
-  };
+    const api = {
+      exportJSON: () => editorRef.current?.export(),
+      clear: () => editorRef.current?.clearModuleSelected(),
+      changeModule:  (m) => editorRef.current?.changeModule(m),
+      setLocked:  (b) => { if (editorRef.current) editorRef.current.editor_mode = b ? 'fixed' : 'edit'; },
+      zoomIn:     () => editorRef.current?.zoom_in(),
+      zoomOut:    () => editorRef.current?.zoom_out(),
+      zoomReset:  () => editorRef.current?.zoom_reset(),
+      addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
+    }
 
   const handleDragStart = (e, nodeType) => {
     e.dataTransfer.setData("node", nodeType);
@@ -147,6 +75,34 @@ const DrawflowEditor = () => {
     addNodeToDrawFlow(nodeType, x, y);
   };
 
+  const handleExport = () => {
+    if (editorRef.current) {
+      const data = editorRef.current.export();
+      console.log('Export data:', data);
+      
+      // Create a blob with the JSON data
+      const jsonString = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      
+      // Create a download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+      
+      // Trigger the download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
+      
+      alert('Drawflow data exported and downloaded as JSON file!');
+    }
+  };
+
+  
   const addNodeToDrawFlow = (name, pos_x, pos_y) => {
     if (!editorRef.current || editorRef.current.editor_mode === "fixed") {
       return false;
@@ -232,76 +188,6 @@ const DrawflowEditor = () => {
     }
   };
 
-  const handleExport = () => {
-    if (editorRef.current) {
-      const data = editorRef.current.export();
-      console.log('Export data:', data);
-      
-      // Create a blob with the JSON data
-      const jsonString = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-      
-      // Trigger the download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up the URL object
-      URL.revokeObjectURL(url);
-      
-      alert('Drawflow data exported and downloaded as JSON file!');
-    }
-  };
-
-  const handleClear = () => {
-    if (editorRef.current) {
-      editorRef.current.clearModuleSelected();
-    }
-  };
-
-  const handleModuleChange = (moduleName) => {
-    if (editorRef.current) {
-      editorRef.current.changeModule(moduleName);
-      setCurrentModule(moduleName);
-    }
-  };
-
-  const handleLockToggle = () => {
-    if (editorRef.current) {
-      if (isLocked) {
-        editorRef.current.editor_mode = 'edit';
-      } else {
-        editorRef.current.editor_mode = 'fixed';
-      }
-      setIsLocked(!isLocked);
-    }
-  };
-
-  const handleZoomIn = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_in();
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_out();
-    }
-  };
-
-  const handleZoomReset = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_reset();
-    }
-  };
-
-
 const domainOptions = [
   { 
     name: "Mechanical (Translational)", 
@@ -364,6 +250,90 @@ const domainOptions = [
       ?? type;
   };
 
+  // event listeners for debug usage
+  const setupEventListeners = (editor) => {
+    editor.on("nodeCreated", (id) => {
+      console.log("Node created " + id);
+    });
+
+    editor.on("nodeRemoved", (id) => {
+      console.log("Node removed " + id);
+    });
+
+    editor.on("nodeSelected", (id) => {
+      console.log("Node selected " + id);
+    });
+
+    editor.on("moduleCreated", (name) => {
+      console.log("Module Created " + name);
+    });
+
+    editor.on("moduleChanged", (name) => {
+      console.log("Module Changed " + name);
+    });
+
+    editor.on('connectionCreated', (connection) => {
+
+      // Get the nodes involved in the connection
+      const outputNode = editor.getNodeFromId(connection.output_id);
+      const inputNode = editor.getNodeFromId(connection.input_id);
+      
+      console.log(`Attempting to connect ${outputNode.name} to ${inputNode.name}`);
+
+      // Check if connection is allowed using rules.js
+      if (checkRules(
+                editor,
+                outputNode.name, 
+                inputNode.name,
+                connection.output_id,
+                connection.input_id
+            ) == false) {
+
+        console.log("Connection not allowed by rules");
+        // Remove the invalid connection
+        editor.removeSingleConnection(
+                connection.output_id,
+                connection.input_id, 
+                connection.output_class,
+                connection.input_class
+            );
+        
+        alert(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`);
+        // Show feedback to user
+        console.log(`Connection blocked: ${outputNode.name} cannot connect to ${inputNode.name}`);
+      }
+    });
+
+    editor.on("connectionRemoved", (connection) => {
+      console.log("Connection removed");
+      console.log(connection);
+    });
+
+    editor.on("mouseMove", (position) => {
+      console.log("Position mouse x:" + position.x + " y:" + position.y);
+    });
+
+    editor.on("nodeMoved", (id) => {
+      console.log("Node moved " + id);
+    });
+
+    editor.on("zoom", (zoom) => {
+      console.log("Zoom level " + zoom);
+    });
+
+    editor.on("translate", (position) => {
+      console.log("Translate x:" + position.x + " y:" + position.y);
+    });
+
+    editor.on("addReroute", (id) => {
+      console.log("Reroute added " + id);
+    });
+
+    editor.on("removeReroute", (id) => {
+      console.log("Reroute removed " + id);
+    });
+  };
+
 
   return (
     <div className="drawflow-app">
@@ -403,12 +373,8 @@ const domainOptions = [
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li onClick={handleExport}>
-                Export
-              </li>
-              <li onClick={handleClear}>
-                Clear
-              </li>
+              <li onClick={handleExport}>Export</li>
+              <li onClick={api.clear}>Clear</li>
             </ul>
           </div>
           
@@ -418,13 +384,13 @@ const domainOptions = [
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <div className="btn-lock" onClick={handleLockToggle}>
+            <div className="btn-lock" onClick={api.setLocked}>
               <i className={`fas ${isLocked ? 'fa-lock-open' : 'fa-lock'}`}></i>
             </div>
             <div className="bar-zoom">
-              <i className="fas fa-search-minus" onClick={handleZoomOut}></i>
-              <i className="fas fa-search" onClick={handleZoomReset}></i>
-              <i className="fas fa-search-plus" onClick={handleZoomIn}></i>
+              <i className="fas fa-search-minus" onClick={api.zoomOut}></i>
+              <i className="fas fa-search" onClick={api.zoomReset}></i>
+              <i className="fas fa-search-plus" onClick={api.zoomIn}></i>
             </div>
           </div>
         </div>
