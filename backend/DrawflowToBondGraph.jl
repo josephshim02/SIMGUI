@@ -34,7 +34,7 @@ Convert a Drawflow JSON file to a BondGraph model.
 bg, data = convert_drawflow_to_bondgraph("test.json")
 ```
 """
-function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
+function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bool=true)
     if verbose
         println("=== Drawflow JSON to BondGraph Converter ===")
         println()
@@ -48,11 +48,7 @@ function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
         println("=" ^ 50)
     end
 
-    if !isfile(json_file)
-        error("JSON file not found: $json_file")
-    end
 
-    json_data = JSON.parsefile(json_file)
     drawflow_data = json_data["drawflow"]["Home"]["data"]
 
     if verbose
@@ -78,11 +74,11 @@ function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
     function create_component(node_id, node_class, node_name)
         if node_class == "f_store"
             component = Component(:I, "I_$node_id")
-            component.I = 2.0  # Set inertia parameter
+            # component.I = 2.0  # Set inertia parameter
             return component
         elseif node_class == "e_store"
             component = Component(:C, "C_$node_id")
-            component.C = 2.0  # Set capacitance parameter
+            # component.C = 2.0  # Set capacitance parameter
             return component
         elseif node_class == "re"
             component = Component(:Re, "R_$node_id")
@@ -407,9 +403,8 @@ function save_solution_json(sol, filename::String="solution.json"; include_metad
     open(filename, "w") do f
         JSON.print(f, solution_data, 2)  # Pretty print with 2-space indentation
     end
-    
-    println("Solution saved to: $filename")
-    return filename
+
+    return JSON.json(solution_data)
 end
 
 end # module
