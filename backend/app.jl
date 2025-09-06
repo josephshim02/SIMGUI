@@ -1,6 +1,7 @@
 using Genie, Genie.Renderer.Json, Genie.Requests
 using HTTP
 
+
 # Configure CORS using Genie's built-in configuration
 Genie.Configuration.config!(
   cors_allowed_origins = ["http://localhost:5173"],
