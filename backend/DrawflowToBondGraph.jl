@@ -435,7 +435,7 @@ function save_solution_json(sol, filename::String="solution.json"; include_metad
     return filename
 end
 
-function solution_to_json(sol, include_metadata::Bool=true)
+function solution_to_json(sol, filename::String="solution.json"; include_metadata::Bool=true)
     if sol === nothing
         error("Cannot save null solution")
     end
