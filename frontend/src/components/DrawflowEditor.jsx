@@ -5,6 +5,56 @@ import './DrawflowEditor.css';
 import { checkRules } from './rules';
 import ResultSection from './ResultSection';
 
+
+// meta about node: io = [inputs, outputs]；body = 'param' | 'source' | 'none'
+const makeMeta = (symbol, io, className, body) =>
+  ({ symbol, inputs: io[0], outputs: io[1], className, body });
+
+// preset 7 type of nodes, make those as objects where omit the fields
+const NODE_META = {
+  // Parameter-type: 1 in, 1 out, with parameter
+  f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
+  e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
+  re:      makeMeta('R',  [1,1], 're',      'param'),
+
+  // Source-type: only 1 out, with source
+  se:      makeMeta('Se', [0,1], 'se',      'source'),
+  sf:      makeMeta('Sf', [0,1], 'sf',      'source'),
+
+  // Junction-type: 1 in 1 out, no inner form
+  f_junc:  makeMeta('1',  [1,1], 'f_junc',  'none'),
+  e_junc:  makeMeta('0',  [1,1], 'e_junc',  'none'),
+};
+
+
+//counts number of nodes so we can give the input/select parameter fields of each node
+// a unique id corresponding to the node id
+let nodeCounter = 1;
+
+function cleanDrawflowData(drawflowData) {
+  const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+  let usefulData = drawFlowDict.drawflow.Home.data;
+  for (const node_id in usefulData) {
+    delete usefulData[node_id].html;
+    const meta = NODE_META[usefulData[node_id].name];
+    let param_dict = {};
+    if (meta.body === 'param') {
+      const element = document.getElementById(`param-${node_id}`);
+    } else if (meta.body === 'source') {
+      const element = document.getElementById(`source-${node_id}`);
+      param_dict['source'] = element.value;
+    }
+    usefulData[node_id].params = param_dict;
+    console.log('param_dict:', param_dict);
+    // const param = meta.body === 'param'  ? document.getElementById(`param-${node_id}`)
+    //               : meta.body === 'source' ? document.getElementById(`source-${node_id}`);
+
+    // console.log('param:', param.value);
+  }
+  drawFlowDict.drawflow.Home.data = usefulData;
+  return drawFlowDict;
+}
+
 const DrawflowEditor = () => {
   const drawflowRef = useRef(null);
   const editorRef = useRef(null);
@@ -75,32 +125,60 @@ const DrawflowEditor = () => {
     addNodeToDrawFlow(nodeType, x, y);
   };
 
+  const sendToBackend = async (drawflowData) => {
+    try {
+      // Show loading state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Processing...';
+        exportButton.disabled = true;
+      }
+
+      var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+      console.log('Original Data:', drawFlowDict);
+      const cleanedData = cleanDrawflowData(drawFlowDict);
+      console.log('Cleaned Data:', cleanedData);
+
+      //Send to Genie backend
+      const response = await fetch('http://localhost:8000/echo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanedData)
+      });
+
+      console.log(response);
+      const result = await response.json();
+    
+      console.log('Result:', result);
+      
+      // Display the simulation results
+      displaySimulationResults(result);
+      
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+      //alert('Error connecting to backend: ' + error.message);
+    } finally {
+      // Reset button state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Export & Simulate';
+        exportButton.disabled = false;
+      }
+    }
+  };
+
   const handleExport = () => {
     if (editorRef.current) {
       const data = editorRef.current.export();
-      console.log('Export data:', data);
       
-      // Create a blob with the JSON data
-      const jsonString = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-      
-      // Trigger the download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up the URL object
-      URL.revokeObjectURL(url);
-      
-      alert('Drawflow data exported and downloaded as JSON file!');
+
+      sendToBackend(data);
+
     }
   };
+
 
   
   const addNodeToDrawFlow = (name, pos_x, pos_y) => {
@@ -119,25 +197,8 @@ const DrawflowEditor = () => {
     
     // format of origin addNode: editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
 
-    // meta about node: io = [inputs, outputs]；body = 'param' | 'source' | 'none'
-    const makeMeta = (symbol, io, className, body) =>
-      ({ symbol, inputs: io[0], outputs: io[1], className, body });
 
-    // preset 7 type of nodes, make those as objects where omit the fields
-    const NODE_META = {
-      // Parameter-type: 1 in, 1 out, with parameter
-      f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
-      e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
-      re:      makeMeta('R',  [1,1], 're',      'param'),
 
-      // Source-type: only 1 out, with source
-      se:      makeMeta('Se', [0,1], 'se',      'source'),
-      sf:      makeMeta('Sf', [0,1], 'sf',      'source'),
-
-      // Junction-type: 1 in 1 out, no inner form
-      f_junc:  makeMeta('1',  [1,1], 'f_junc',  'none'),
-      e_junc:  makeMeta('0',  [1,1], 'e_junc',  'none'),
-    };
 
     // wrap of nodes, where each symbol has letter in a circle, have title and inner HTML
     const wrap = (symbol, title, inner = '') => `
@@ -152,14 +213,17 @@ const DrawflowEditor = () => {
     const ParamField = 
     `<p>Param:</p>
     <input type="number"
+      id="param-${nodeCounter}"  // give unique id to each param input field
       step="any" df-param placeholder="0.0"
       style="width:80px;padding:2px;margin:2px;border:1px solid #ccc;border-radius:3px;"
       onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.value)">
     `;
 
+
     const SourceField =
     `<p>Input Type:</p>
     <select df-input-type
+      id="source-${nodeCounter++}"  // give unique id to each select field
       style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
       onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
         <option param="unit-step">Unit Step Input</option>
@@ -310,7 +374,7 @@ const domainOptions = [
     });
 
     editor.on("mouseMove", (position) => {
-      console.log("Position mouse x:" + position.x + " y:" + position.y);
+      //console.log("Position mouse x:" + position.x + " y:" + position.y);
     });
 
     editor.on("nodeMoved", (id) => {
