@@ -81,34 +81,32 @@ const DrawflowEditor = () => {
     const rect = drawflowRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    addNodeToDrawFlow(nodeType, x, y);
+    drawflowAPI.addNodeAt(nodeType, x, y);
   };
 
   const handleExport = () => {
-    if (editorRef.current) {
-      const data = editorRef.current.export();
-      console.log('Export data:', data);
-      
-      // Create a blob with the JSON data
-      const jsonString = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-      
-      // Trigger the download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up the URL object
-      URL.revokeObjectURL(url);
-      
-      alert('Drawflow data exported and downloaded as JSON file!');
-    }
+    const data = drawflowAPI.exportJSON() ?? {};
+    console.log('Export data:', data);
+    
+    // Create a blob with the JSON data
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    
+    // Create a download link
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+    
+    // Trigger the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up the URL object
+    URL.revokeObjectURL(url);
+    
+    alert('Drawflow data exported and downloaded as JSON file!');
   };
 
   
