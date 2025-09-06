@@ -47,16 +47,25 @@ const DrawflowEditor = () => {
     };
   }, []);
 
-    const api = {
-      exportJSON: () => editorRef.current?.export(),
-      clear: () => editorRef.current?.clearModuleSelected(),
-      changeModule:  (m) => editorRef.current?.changeModule(m),
-      setLocked:  (b) => { if (editorRef.current) editorRef.current.editor_mode = b ? 'fixed' : 'edit'; },
-      zoomIn:     () => editorRef.current?.zoom_in(),
-      zoomOut:    () => editorRef.current?.zoom_out(),
-      zoomReset:  () => editorRef.current?.zoom_reset(),
-      addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
-    }
+  const drawflowAPI = {
+    exportJSON: () => editorRef.current?.export(),
+    clear: () => editorRef.current?.clearModuleSelected(),
+    changeModule:  (m) => editorRef.current?.changeModule(m),
+    setLockedMode: locked =>
+      editorRef.current && (editorRef.current.editor_mode = locked ? 'fixed' : 'edit'),
+    zoomIn:     () => editorRef.current?.zoom_in(),
+    zoomOut:    () => editorRef.current?.zoom_out(),
+    zoomReset:  () => editorRef.current?.zoom_reset(),
+    addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
+  }
+
+  const handleLockToggle = () => {
+    setIsLocked(prev => {
+    const next = !prev;
+    drawflowAPI.setLockedMode(next);
+    return next;
+    })
+  };
 
   const handleDragStart = (e, nodeType) => {
     e.dataTransfer.setData("node", nodeType);
@@ -250,7 +259,7 @@ const domainOptions = [
       ?? type;
   };
 
-  // event listeners for debug usage
+  // event listeners for debug usages
   const setupEventListeners = (editor) => {
     editor.on("nodeCreated", (id) => {
       console.log("Node created " + id);
@@ -374,7 +383,7 @@ const domainOptions = [
           <div className="menu">
             <ul>
               <li onClick={handleExport}>Export</li>
-              <li onClick={api.clear}>Clear</li>
+              <li onClick={drawflowAPI.clear}>Clear</li>
             </ul>
           </div>
           
@@ -384,13 +393,13 @@ const domainOptions = [
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <div className="btn-lock" onClick={api.setLocked}>
+            <div className="btn-lock" onClick={handleLockToggle}>
               <i className={`fas ${isLocked ? 'fa-lock-open' : 'fa-lock'}`}></i>
             </div>
             <div className="bar-zoom">
-              <i className="fas fa-search-minus" onClick={api.zoomOut}></i>
-              <i className="fas fa-search" onClick={api.zoomReset}></i>
-              <i className="fas fa-search-plus" onClick={api.zoomIn}></i>
+              <i className="fas fa-search-minus" onClick={drawflowAPI.zoomOut}></i>
+              <i className="fas fa-search" onClick={drawflowAPI.zoomReset}></i>
+              <i className="fas fa-search-plus" onClick={drawflowAPI.zoomIn}></i>
             </div>
           </div>
         </div>
