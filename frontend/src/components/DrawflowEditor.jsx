@@ -302,25 +302,77 @@ const DrawflowEditor = () => {
       const data = editorRef.current.export();
       console.log('Export data:', data);
       
-      // Create a blob with the JSON data
-      const jsonString = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
+      // Send data to Genie backend
+      sendToBackend(data);
+    }
+  };
+
+  const sendToBackend = async (drawflowData) => {
+    try {
+      // Show loading state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Processing...';
+        exportButton.disabled = true;
+      }
+
+      // Send to Genie backend
+      const response = await fetch('http://localhost:8000/echo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(drawflowData)
+      });
+
+      console.log(response);
+      const result = await response.json();
+    
+      console.log('Result:', result);
       
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+      // Display the simulation results
+      displaySimulationResults(result);
       
-      // Trigger the download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+      alert('Error connecting to backend: ' + error.message);
+    } finally {
+      // Reset button state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Export & Simulate';
+        exportButton.disabled = false;
+      }
+    }
+  };
+
+  const displaySimulationResults = (result) => {
+    // Create or update results section
+    let resultsSection = document.getElementById('simulation-results');
+    if (!resultsSection) {
+      resultsSection = document.createElement('div');
+      resultsSection.id = 'simulation-results';
+      resultsSection.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 400px;
+        max-height: 80vh;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        overflow-y: auto;
+      `;
+      document.body.appendChild(resultsSection);
       
-      // Clean up the URL object
-      URL.revokeObjectURL(url);
-      
-      alert('Drawflow data exported and downloaded as JSON file!');
+      // Display the result data
+      resultsSection.innerHTML = `
+        <h3>Simulation Results</h3>
+        <pre>${JSON.stringify(result, null, 2)}</pre>
+      `;
     }
   };
 
@@ -330,12 +382,6 @@ const DrawflowEditor = () => {
     }
   };
 
-  const handleModuleChange = (moduleName) => {
-    if (editorRef.current) {
-      editorRef.current.changeModule(moduleName);
-      setCurrentModule(moduleName);
-    }
-  };
 
   const handleLockToggle = () => {
     if (editorRef.current) {

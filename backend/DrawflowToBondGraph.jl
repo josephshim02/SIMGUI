@@ -34,7 +34,7 @@ Convert a Drawflow JSON file to a BondGraph model.
 bg, data = convert_drawflow_to_bondgraph("test.json")
 ```
 """
-function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
+function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bool=true)
     if verbose
         println("=== Drawflow JSON to BondGraph Converter ===")
         println()
@@ -52,7 +52,6 @@ function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
         error("JSON file not found: $json_file")
     end
 
-    json_data = JSON.parsefile(json_file)
     drawflow_data = json_data["drawflow"]["Home"]["data"]
 
     if verbose
