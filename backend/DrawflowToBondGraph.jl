@@ -85,8 +85,7 @@ function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
             component.C = 2.0  # Set capacitance parameter
             return component
         elseif node_class == "re"
-            component = Component(:R, "R_$node_id")
-            component.R = 2.0  # Set resistance parameter
+            component = Component(:Re, "R_$node_id")
             return component
         elseif node_class == "e_junc"
             return EqualEffort()
@@ -158,9 +157,6 @@ function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
         println("=" ^ 50)
     end
 
-    # Track connections to avoid duplicates
-    connections_made = Set{Tuple{String, String}}()
-
     # Process each node's connections
     for (node_id, node_data) in drawflow_data
         if !haskey(node_data, "component")
@@ -180,22 +176,15 @@ function convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
                         if haskey(drawflow_data, source_node_id) && haskey(drawflow_data[source_node_id], "component")
                             source_component = drawflow_data[source_node_id]["component"]
                             
-                            # Create unique connection identifier
-                            conn_id = (source_node_id, node_id)
-                            
-                            if !(conn_id in connections_made)
-                                try
-                                    # Simple connection: source -> target
-                                    connect!(bg, source_component, target_component)
-                                    if verbose
-                                        println("  Connected $source_node_id -> $node_id")
-                                    end
-                                    
-                                    push!(connections_made, conn_id)
-                                catch e
-                                    if verbose
-                                        println("  Warning: Failed to connect $source_node_id -> $node_id: $e")
-                                    end
+                            try
+                                # Simple connection: source -> target
+                                connect!(bg, source_component, target_component)
+                                if verbose
+                                    println("  Connected $source_node_id -> $node_id")
+                                end
+                            catch e
+                                if verbose
+                                    println("  Warning: Failed to connect $source_node_id -> $node_id: $e")
                                 end
                             end
                         else
