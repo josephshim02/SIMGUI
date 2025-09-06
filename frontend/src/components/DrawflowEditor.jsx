@@ -301,28 +301,74 @@ const DrawflowEditor = () => {
     if (editorRef.current) {
       const data = editorRef.current.export();
       console.log('Export data:', data);
-      
-      // Create a blob with the JSON data
-      const jsonString = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-      
-      // Trigger the download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up the URL object
-      URL.revokeObjectURL(url);
-      
-      alert('Drawflow data exported and downloaded as JSON file!');
+      sendToBackend(data);
     }
   };
+  function cleanDrawflowData(drawflowData) {
+    const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+    const usefulData = drawFlowDict.drawflow.Home.data;
+    for (const key in usefulData) {
+      delete usefulData[key].html;
+    }
+    drawFlowDict.drawflow.Home.data = usefulData;
+    return drawFlowDict;
+  }
+  const sendToBackend = async (drawflowData) => {
+    try {
+      // Show loading state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Processing...';
+        exportButton.disabled = true;
+      }
+
+      var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+      const cleanedData = cleanDrawflowData(drawFlowDict);
+      console.log('Cleaned Data:', cleanedData);
+      console.log(JSON.stringify(cleanedData));
+      // Create a Blob from the string
+      // const cleanedDataStr = JSON.stringify(cleanedData, null, 2); // Convert to pretty JSON string
+
+      // const blob = new Blob([cleanedDataStr], { type: 'text/plain' });
+
+      // // Create a temporary link and trigger the download
+      // const link = document.createElement('a');
+      // link.href = URL.createObjectURL(blob);
+      // link.download = 'cleanedData.txt';
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+
+      //Send to Genie backend
+      const response = await fetch('http://localhost:8000/echo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanedData)
+      });
+
+      console.log(response);
+      const result = await response.json();
+
+      console.log('Result:', result);
+
+      // Display the simulation results
+      // displaySimulationResults(result);
+
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+      alert('Error connecting to backend: ' + error.message);
+    } finally {
+      // Reset button state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Export & Simulate';
+        exportButton.disabled = false;
+      }
+    }
+  };
+
 
   const handleClear = () => {
     if (editorRef.current) {
