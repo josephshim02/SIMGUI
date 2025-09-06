@@ -9,8 +9,8 @@
     5.0
   ],
   "layout": {
+    "autosize": true,
     "showlegend": true,
-    "height": 600,
     "xaxis": {
       "title": "Time",
       "showgrid": true
@@ -23,8 +23,7 @@
     "yaxis": {
       "title": "State Variables",
       "showgrid": true
-    },
-    "width": 800
+    }
   },
   "metadata": {
     "state_names": [
