@@ -9,11 +9,12 @@ corresponding BondGraph components with proper connections.
 
 module DrawflowToBondGraph
 
-import BondGraphs: BondGraph, Component, EqualEffort, EqualFlow, connect!, add_node!, simulate, constitutive_relationsusing, Plots
+using BondGraphs
 using ModelingToolkit
 using JSON
+using Plots
 
-export convert_drawflow_to_bondgraph, simulate_bondgraph, plot_bondgraph, plot_simulation, save_solution_json
+export convert_drawflow_to_bondgraph, simulate_bondgraph, plot_bondgraph, plot_simulation, save_solution_json, solution_to_json
 
 """
     convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bool=true)
@@ -60,7 +61,7 @@ This function expects the JSON data to have the structure:
 }
 ```
 """
-function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}, verbose::Bool=true)
+function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bool=true)
     if verbose
         println("=== Drawflow JSON to BondGraph Converter ===")
         println()
@@ -432,6 +433,71 @@ function save_solution_json(sol, filename::String="solution.json"; include_metad
     
     println("Solution saved to: $filename")
     return filename
+end
+
+function solution_to_json(sol, include_metadata::Bool=true)
+    if sol === nothing
+        error("Cannot save null solution")
+    end
+    
+    # Extract solution data in Plotly.js format
+    solution_data = Dict()
+    
+    # Time points
+    solution_data["time"] = collect(sol.t)
+    
+    # Create traces for each state variable (Plotly.js format)
+    solution_data["traces"] = []
+    
+    # Get state variable names
+    state_names = string.(sol.u[1])
+    
+    for i in 1:length(sol.u[1])
+        trace = Dict(
+            "x" => collect(sol.t),
+            "y" => [sol.u[j][i] for j in 1:length(sol.u)],
+            "name" => state_names[i],
+            "type" => "scatter",
+            "mode" => "lines",
+            "line" => Dict(
+                "width" => 2
+            )
+        )
+        push!(solution_data["traces"], trace)
+    end
+    
+    # Plotly.js layout configuration
+    solution_data["layout"] = Dict(
+        "title" => Dict(
+            "text" => "Bond Graph Simulation Results",
+            "x" => 0.5
+        ),
+        "xaxis" => Dict(
+            "title" => "Time",
+            "showgrid" => true
+        ),
+        "yaxis" => Dict(
+            "title" => "State Variables",
+            "showgrid" => true
+        ),
+        "hovermode" => "x unified",
+        "showlegend" => true,
+        "width" => 800,
+        "height" => 600
+    )
+    
+    # Metadata
+    if include_metadata
+        solution_data["metadata"] = Dict(
+            "solution_type" => string(typeof(sol)),
+            "num_timepoints" => length(sol.t),
+            "num_states" => length(sol.u[1]),
+            "time_range" => [sol.t[1], sol.t[end]],
+            "state_names" => state_names
+        )
+    end
+
+    return JSON.json(solution_data)
 end
 
 end # module

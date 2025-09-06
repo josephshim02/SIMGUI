@@ -329,33 +329,26 @@ const DrawflowEditor = () => {
       var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
       const cleanedData = cleanDrawflowData(drawFlowDict);
       console.log('Cleaned Data:', cleanedData);
+      // Create a Blob from the string
+      const cleanedDataStr = JSON.stringify(cleanedData, null, 2); // Convert to pretty JSON string
 
+      const blob = new Blob([cleanedDataStr], { type: 'text/plain' });
 
-      for (const key in usefulData) {
-        if (usefulData.hasOwnProperty(key)) {
-            const value = usefulData[key];
-            
-            console.log(`${key}: ${value}`);
-            console.log(typeof value);
-            for (const innerKey in value) {
-              if (value.hasOwnProperty(innerKey)) {
-                  const innerValue = value[innerKey];
-                  console.log(`  ${innerKey}: ${innerValue}`);
-                  console.log(typeof innerValue);
-                  if (typeof innerValue === "string" && innerValue.includes("html")) {
-                    console.log("This is an HTML content");
-                  }
-              }
-            }
-        }
-    }
+      // Create a temporary link and trigger the download
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'cleanedData.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
       //Send to Genie backend
       const response = await fetch('http://localhost:8000/echo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(drawflowData)
+        body: JSON.stringify(cleanedData)
       });
 
       console.log(response);

@@ -1,5 +1,4 @@
 module App
-
 using Genie, Genie.Renderer.Json, Genie.Requests
 using HTTP
 include("DrawflowToBondGraph.jl")
@@ -19,18 +18,25 @@ Genie.Configuration.config!(
 
 # Health check endpoint
 route("/") do
-  HTML("Healt436356hy")
+  HTML("Healt4hy")
 end
 
 # Echo endpoint for testing
 route("/echo", method = POST) do
   test = jsonpayload()
   println(test)
+  # open("received_test.txt", "w") do io
+  #   write(io, JSON.json(test))
+  # end
+  clean_test = JSON.parse(JSON.json(test))
   # println(rawpayload() == JSON.json(jsonpayload()))
-  bg, enhanced_data = convert_drawflow_to_bondgraph(test,verbose=false)
-  sol, relations = simulate_bondgraph(bg, tspan=(0.0, 10.0), verbose=false)
+
+  #triple_quoted_str = "\"\"\"$clean_test\"\"\""
+
+  bg, enhanced_data = convert_drawflow_to_bondgraph(clean_test,verbose=true)
+  sol, relations = simulate_bondgraph(bg, tspan=(0.0, 10.0), verbose=true)
+  println(sol)
   solution_data = solution_to_json(sol, include_metadata=true)
   solution_data |> json
 end
-
 end
