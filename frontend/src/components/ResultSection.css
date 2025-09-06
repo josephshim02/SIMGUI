@@ -1,8 +1,8 @@
 .result-section {
-    width: 500px;
+    width: 700px;
     height: calc(100vh - 66px); /* leave space for header (66px) */
     background: #fff;
-    box-shadow: -2px 0 8px rgba(0,0,0,0.12);
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.12);
     padding: 24px;
     position: fixed;
     right: 0;
@@ -10,12 +10,36 @@
     z-index: 1000;
     transition: transform 220ms ease, opacity 220ms ease;
     will-change: transform, opacity;
+    display: flex;
+    flex-direction: column;
 }
 
+.image-section {
+    height: 50%;
+    padding: 0px;
+    border: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .result-image {
-    width: 100%;
-    height: calc(100% - 48px);
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
+}
+.plot-section {
+    height: 50%;
+    padding: 0px;
+    border: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.result-plot {
+    /* ensure the plot container fills the plot-section so Plotly can be sized accordingly */
+    width: 100%;
+    height: 100%;
+    /* remove object-fit (not applicable to div) */
 }
 
 .toggle-button {
@@ -27,14 +51,14 @@
     cursor: pointer;
     position: fixed;
     top: 20px;
-    right: 520px; /* 500px panel + 20px gutter (when panel present) */
+    right: 50px; /* 500px panel + 20px gutter (when panel present) */
     z-index: 1100;
     transition: right 220ms ease;
 }
 
 /* fallback: on narrow screens move the toggle button closer to right edge */
 @media (max-width: 900px) {
-  .toggle-button {
-    right: 20px;
-  }
+    .toggle-button {
+        right: 20px;
+    }
 }

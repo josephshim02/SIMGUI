@@ -66,15 +66,7 @@ const DrawflowEditor = () => {
     editor.on("moduleChanged", (name) => {
       console.log("Module Changed " + name);
     });
-
-    // editor.on("connectionCreated", (connection) => {
-    //   console.log("Connection created");
-    //   console.log(connection);
-    // });
-
     editor.on('connectionCreated', function(connection) {
-      console.log('Connection created');
-      console.log(connection);
 
       // Get the nodes involved in the connection
       const outputNode = editor.getNodeFromId(connection.output_id);
@@ -359,17 +351,11 @@ const DrawflowEditor = () => {
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li
-                className={currentModule === 'Home' ? 'selected' : ''}
-                onClick={() => handleModuleChange('Home')}
-              >
-                Home
+              <li onClick={handleExport}>
+                Export
               </li>
-              <li
-                className={currentModule === 'Other' ? 'selected' : ''}
-                onClick={() => handleModuleChange('Other')}
-              >
-                Other Module
+              <li onClick={handleClear}>
+                Clear
               </li>
             </ul>
           </div>
@@ -380,12 +366,6 @@ const DrawflowEditor = () => {
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <div className="btn-export" onClick={handleExport}>
-              Export
-            </div>
-            <div className="btn-clear" onClick={handleClear}>
-              Clear
-            </div>
             <div className="btn-lock" onClick={handleLockToggle}>
               <i className={`fas ${isLocked ? 'fa-lock-open' : 'fa-lock'}`}></i>
             </div>

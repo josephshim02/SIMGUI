@@ -1,5 +1,3 @@
-alert("Rules loaded");
-
 const notAllowedConnections = [
     // Source rules (Se, Sf)
     ["e_store", "se"],
@@ -42,8 +40,6 @@ function checkSourceRules(editor, outputNodeId, newOutputNodeName, newInputNodeI
         // Check all existing connections to this input
         for (let connection of input.connections) {
             const connectedNode = editor.getNodeFromId(connection.node);
-            
-            console.log("Connected node:", connectedNode);
 
             // If any connected node is a source type, block the new connection
             if (connectedNode && outputNodeId != connection.node && newOutputNodeName == connectedNode.name) {
