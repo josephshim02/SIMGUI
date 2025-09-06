@@ -40,6 +40,7 @@ function cleanDrawflowData(drawflowData) {
     let param_dict = {};
     if (meta.body === 'param') {
       const element = document.getElementById(`param-${node_id}`);
+      param_dict['parameters'] = element.value;
     } else if (meta.body === 'source') {
       const element = document.getElementById(`source-${node_id}`);
       param_dict['source'] = element.value;
@@ -125,7 +126,14 @@ const DrawflowEditor = () => {
     addNodeToDrawFlow(nodeType, x, y);
   };
 
-  const sendToBackend = async (drawflowData) => {
+  const sendToBackend = async () => {
+    if (!editorRef.current) {
+      console.error("Editor not initialized");
+      return;
+    }
+
+    const drawflowData = editorRef.current.export();
+    
     try {
       // Show loading state
       const exportButton = document.querySelector('.export-btn');
@@ -398,299 +406,6 @@ const domainOptions = [
     });
   };
 
-  const handleDragStart = (e, nodeType) => {
-    e.dataTransfer.setData("node", nodeType);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const nodeType = e.dataTransfer.getData("node");
-    const rect = drawflowRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    addNodeToDrawFlow(nodeType, x, y);
-  };
-
-  const addNodeToDrawFlow = (name, pos_x, pos_y) => {
-    if (!editorRef.current || editorRef.current.editor_mode === "fixed") {
-      return false;
-    }
-
-    const editor = editorRef.current;
-    
-    // Calculate position relative to canvas
-    pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) -
-            editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom));
-    pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
-            editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom));
-
-    switch (name) {
-      case "f_store": {
-        const fStore = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">I</span> Inertia 
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("f_store", 1, 1, pos_x, pos_y, "f_store", {}, fStore);
-        break;
-      }
-
-      case "e_store": {
-        const eStore = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">C</span> Capacitance
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("e_store", 1, 1, pos_x, pos_y, "e_store", {}, eStore);
-        break;
-      }
-
-      case "re": {
-        const re = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">R</span> Resistance
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("re", 1, 1, pos_x, pos_y, "re", {}, re);
-        break;
-      }
-
-      case "se": {
-        const se = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">Se</span> SE
-            </div>
-            <div class="box">
-            <p>Input Type:</p>
-            <select df-input-type 
-                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
-                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-              <option param="unit-step">Unit Step Input</option>
-              <option param="sinusoidal">Sinusoidal Input</option>
-              <option param="square-wave">Square Wave Input</option>
-              <option param="impulse">Impulse Input</option>
-            </select>
-          </div>
-          </div>
-        `;
-        editor.addNode("se", 0, 1, pos_x, pos_y, "se", {}, se);
-        break;
-      }
-
-      case "sf": {
-        const sf = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">Sf</span> SF
-            </div>
-            <div class="box">
-            <p>Input Type:</p>
-            <select df-input-type 
-                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
-                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-              <option param="unit-step">Unit Step Input</option>
-              <option param="sinusoidal">Sinusoidal Input</option>
-              <option param="square-wave">Square Wave Input</option>
-              <option param="impulse">Impulse Input</option>
-            </select>
-          </div>
-          </div>
-        `;
-        editor.addNode("sf", 0, 1, pos_x, pos_y, "sf", {}, sf);
-        break;
-      }
-
-      case "f_junc": {
-        const fJunc = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">1</span>1
-            </div>
-          </div>
-        `;
-        editor.addNode("f_junc", 1, 1, pos_x, pos_y, "f_junc", {}, fJunc);
-        break;
-      }
-
-      case "e_junc": {
-        const eJunc = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">0</span>0 
-            </div>
-          </div>
-        `;
-        editor.addNode("e_junc", 1, 1, pos_x, pos_y, "e_junc", {}, eJunc);
-        break;
-      }
-
-      default:
-        break;
-    }
-  };
-
-  const handleExport = () => {
-    if (editorRef.current) {
-      const data = editorRef.current.export();
-      console.log('Export data:', data);
-      sendToBackend(data);
-    }
-  };
-  function cleanDrawflowData(drawflowData) {
-    const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
-    const usefulData = drawFlowDict.drawflow.Home.data;
-    for (const key in usefulData) {
-      delete usefulData[key].html;
-    }
-    drawFlowDict.drawflow.Home.data = usefulData;
-    return drawFlowDict;
-  }
-  const sendToBackend = async (drawflowData) => {
-    try {
-      // Show loading state
-      const exportButton = document.querySelector('.export-btn');
-      if (exportButton) {
-        exportButton.textContent = 'Processing...';
-        exportButton.disabled = true;
-      }
-
-      var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
-      const cleanedData = cleanDrawflowData(drawFlowDict);
-      console.log('Cleaned Data:', cleanedData);
-      console.log(JSON.stringify(cleanedData));
-      // Create a Blob from the string
-      // const cleanedDataStr = JSON.stringify(cleanedData, null, 2); // Convert to pretty JSON string
-
-      // const blob = new Blob([cleanedDataStr], { type: 'text/plain' });
-
-      // // Create a temporary link and trigger the download
-      // const link = document.createElement('a');
-      // link.href = URL.createObjectURL(blob);
-      // link.download = 'cleanedData.txt';
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-
-      //Send to Genie backend
-      const response = await fetch('http://localhost:8000/echo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cleanedData)
-      });
-
-      console.log(response);
-      const result = await response.json();
-
-      console.log('Result:', result);
-
-      // Display the simulation results
-      // displaySimulationResults(result);
-
-    } catch (error) {
-      console.error('Error sending data to backend:', error);
-      alert('Error connecting to backend: ' + error.message);
-    } finally {
-      // Reset button state
-      const exportButton = document.querySelector('.export-btn');
-      if (exportButton) {
-        exportButton.textContent = 'Export & Simulate';
-        exportButton.disabled = false;
-      }
-    }
-  };
-
-
-  const handleClear = () => {
-    if (editorRef.current) {
-      editorRef.current.clearModuleSelected();
-    }
-  };
-
-  const handleModuleChange = (moduleName) => {
-    if (editorRef.current) {
-      editorRef.current.changeModule(moduleName);
-      setCurrentModule(moduleName);
-    }
-  };
-
-  const handleLockToggle = () => {
-    if (editorRef.current) {
-      if (isLocked) {
-        editorRef.current.editor_mode = 'edit';
-      } else {
-        editorRef.current.editor_mode = 'fixed';
-      }
-      setIsLocked(!isLocked);
-    }
-  };
-
-  const handleZoomIn = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_in();
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_out();
-    }
-  };
-
-  const handleZoomReset = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_reset();
-    }
-  };
-
-  const nodeTypes = [
-    { type: "f_store", symbol: "I", label: "Inertia" },
-    { type: "e_store", symbol: "C", label: "Capacitance" },
-    { type: "re", symbol: "R", label: "Resistance" },
-    { type: "se", symbol: "Se", label: "SE" },
-    { type: "sf", symbol: "Sf", label: "SF" },
-    { type: "f_junc", symbol: "1", label: "1" },
-    { type: "e_junc", symbol: "0", label: "0" },
-  ];
 
   return (
     <div className="drawflow-app">
@@ -730,7 +445,7 @@ const domainOptions = [
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li onClick={handleExport}>Export</li>
+              <li onClick={sendToBackend}>Export</li>
               <li onClick={api.clear}>Clear</li>
             </ul>
           </div>
