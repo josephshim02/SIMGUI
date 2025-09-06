@@ -1,0 +1,891 @@
+┌ Info: 2025-09-06 14:37:23 Watching ["C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp"]
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:19
+┌ Info: 2025-09-06 14:37:25 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 14:37:30 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 14:37:30 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 14:54:40 Watching ["C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp"]
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:19
+┌ Info: 2025-09-06 14:54:43 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 15:19:22 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 15:19:22 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Error: 2025-09-06 15:19:31 MethodError: no method matching System()
+│ The function `System` exists, but no method is defined for this combination of argument types.
+│ 
+│ Closest candidates are:
+│   System(!Matched::AbstractVector{<:Symbolics.Equation}, !Matched::Any, !Matched::Any...; name, kw...)
+│    @ ModelingToolkit C:\Users\yosep\.julia\packages\ModelingToolkit\S1kqK\src\systems\systems.jl:1
+│ 
+│ Stacktrace:
+│   [1] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:25
+│   [2] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:14
+│   [3] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_1"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│   [4] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│   [5] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│   [6] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│   [7] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│   [8] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│   [9] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [10] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [11] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [12] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [13] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [14] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [15] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [16] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [17] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [18] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [19] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [20] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [21] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [22] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [23] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [24] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [25] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [26] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Info: 2025-09-06 15:21:01 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Error: 2025-09-06 15:21:04 MethodError: no method matching System(::Vector{Any})
+│ The function `System` exists, but no method is defined for this combination of argument types.
+│ 
+│ Closest candidates are:
+│   System(!Matched::AbstractVector{<:Symbolics.Equation}, !Matched::Any, !Matched::Any...; name, kw...)
+│    @ ModelingToolkit C:\Users\yosep\.julia\packages\ModelingToolkit\S1kqK\src\systems\systems.jl:1
+│ 
+│ Stacktrace:
+│   [1] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:25
+│   [2] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:14
+│   [3] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_1"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│   [4] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│   [5] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│   [6] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│   [7] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│   [8] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│   [9] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [10] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [11] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [12] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [13] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [14] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [15] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [16] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [17] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [18] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [19] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [20] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [21] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [22] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [23] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [24] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [25] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [26] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Info: 2025-09-06 15:29:06 Watching ["C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp"]
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:19
+┌ Info: 2025-09-06 15:29:08 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 15:29:14 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 15:29:15 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Error: 2025-09-06 15:29:22 MethodError: no method matching System(::Vector{Any})
+│ The function `System` exists, but no method is defined for this combination of argument types.
+│ 
+│ Closest candidates are:
+│   System(!Matched::AbstractVector{<:Symbolics.Equation}, !Matched::Any, !Matched::Any...; name, kw...)
+│    @ ModelingToolkit C:\Users\yosep\.julia\packages\ModelingToolkit\S1kqK\src\systems\systems.jl:1
+│ 
+│ Stacktrace:
+│   [1] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:25
+│   [2] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:14
+│   [3] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_1"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│   [4] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│   [5] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│   [6] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│   [7] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│   [8] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│   [9] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [10] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [11] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [12] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [13] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [14] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [15] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [16] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [17] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [18] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [19] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [20] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [21] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [22] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [23] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [24] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [25] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [26] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Error: 2025-09-06 15:31:36 Failed to revise C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl
+│   exception = Revise.ReviseEvalException("C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp\\app.jl:5", ArgumentError("Package Plots not found in current path.\n- Run `import Pkg; Pkg.add(\"Plots\")` to install the Plots package."), Any[(top-level scope at app.jl:5, 1)])
+└ @ Revise C:\Users\yosep\.julia\packages\Revise\PSzoa\src\packagedef.jl:741
+┌ Warning: 2025-09-06 15:31:36 The running code does not match the saved version for the following files:
+│ 
+│   C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl
+│ 
+│ If the error was due to evaluation order, it can sometimes be resolved by calling `Revise.retry()`.
+│ Use Revise.errors() to report errors again. Only the first error in each file is shown.
+│ Your prompt color may be yellow until the errors are resolved.
+└ @ Revise C:\Users\yosep\.julia\packages\Revise\PSzoa\src\packagedef.jl:859
+┌ Info: 2025-09-06 15:41:22 Watching ["C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp"]
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:19
+┌ Info: 2025-09-06 15:41:25 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 15:43:31 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 15:43:32 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 15:46:31 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 15:46:34 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 15:46:34 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 15:51:39 Watching ["C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp"]
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:19
+┌ Info: 2025-09-06 15:51:41 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:01:57 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:05 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:22 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:25 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:27 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:39 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:42 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:44 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:02:50 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:05:52 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 16:05:52 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Error: 2025-09-06 16:06:55 UndefVarError: `plot` not defined in `Main.App`
+│ Hint: It looks like two or more modules export different bindings with this name, resulting in ambiguity. Try explicitly importing it from a particular module, or qualifying the name with the module it should come from.
+│ Hint: a global variable of this name also exists in StipplePlotly.
+│ Hint: a global variable of this name also exists in GenieFramework.
+│ Hint: a global variable of this name may be made accessible by importing Makie in the current active module Main
+│ Hint: a global variable of this name may be made accessible by importing Plots in the current active module Main
+│ Stacktrace:
+│   [1] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:33
+│   [2] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:15
+│   [3] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_2"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│   [4] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│   [5] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│   [6] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│   [7] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│   [8] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│   [9] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [10] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [11] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [12] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [13] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [14] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [15] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [16] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [17] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [18] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [19] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [20] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [21] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [22] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [23] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [24] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [25] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [26] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Info: 2025-09-06 16:10:27 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:10:33 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:10:38 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 16:10:41 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 16:10:41 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 16:13:28 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:13:28 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 16:13:31 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:14:44 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:14:44 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Error: 2025-09-06 16:14:45 SystemError: opening file "C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp\\public\\image\\bondgraph.png": No such file or directory
+│ Stacktrace:
+│   [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
+│     @ Base .\error.jl:176
+│   [2] systemerror
+│     @ .\error.jl:175 [inlined]
+│   [3] open(fname::String; lock::Bool, read::Nothing, write::Nothing, create::Nothing, truncate::Bool, append::Nothing)
+│     @ Base .\iostream.jl:295
+│   [4] open
+│     @ .\iostream.jl:277 [inlined]
+│   [5] open(fname::String, mode::String; lock::Bool)
+│     @ Base .\iostream.jl:358
+│   [6] open(fname::String, mode::String)
+│     @ Base .\iostream.jl:357
+│   [7] open(::Plots.var"#348#349"{Plots.Plot{Plots.GRBackend}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+│     @ Base .\io.jl:408
+│   [8] open
+│     @ .\io.jl:407 [inlined]
+│   [9] png(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:5
+│  [10] savefig(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:148
+│  [11] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:34
+│  [12] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:15
+│  [13] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_2"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│  [14] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│  [15] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│  [16] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│  [17] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│  [18] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│  [19] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [20] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [21] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [22] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [23] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [24] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [25] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [26] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [27] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [28] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [29] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [30] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [31] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [32] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [33] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [34] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [35] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [36] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Info: 2025-09-06 16:15:54 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:16:03 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:16:07 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:16:17 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:16:21 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 16:16:23 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 16:16:23 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Error: 2025-09-06 16:16:29 SystemError: opening file "C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp\\public\\image\\bondgraph.png": No such file or directory
+│ Stacktrace:
+│   [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
+│     @ Base .\error.jl:176
+│   [2] systemerror
+│     @ .\error.jl:175 [inlined]
+│   [3] open(fname::String; lock::Bool, read::Nothing, write::Nothing, create::Nothing, truncate::Bool, append::Nothing)
+│     @ Base .\iostream.jl:295
+│   [4] open
+│     @ .\iostream.jl:277 [inlined]
+│   [5] open(fname::String, mode::String; lock::Bool)
+│     @ Base .\iostream.jl:358
+│   [6] open(fname::String, mode::String)
+│     @ Base .\iostream.jl:357
+│   [7] open(::Plots.var"#348#349"{Plots.Plot{Plots.GRBackend}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+│     @ Base .\io.jl:408
+│   [8] open
+│     @ .\io.jl:407 [inlined]
+│   [9] png(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:5
+│  [10] savefig(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:148
+│  [11] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:35
+│  [12] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:15
+│  [13] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_2"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│  [14] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│  [15] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│  [16] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│  [17] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│  [18] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│  [19] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [20] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [21] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [22] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [23] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [24] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [25] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [26] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [27] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [28] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [29] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [30] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [31] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [32] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [33] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [34] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [35] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [36] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Error: 2025-09-06 16:16:34 SystemError: opening file "C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp\\public\\image\\bondgraph.png": No such file or directory
+│ Stacktrace:
+│   [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
+│     @ Base .\error.jl:176
+│   [2] systemerror
+│     @ .\error.jl:175 [inlined]
+│   [3] open(fname::String; lock::Bool, read::Nothing, write::Nothing, create::Nothing, truncate::Bool, append::Nothing)
+│     @ Base .\iostream.jl:295
+│   [4] open
+│     @ .\iostream.jl:277 [inlined]
+│   [5] open(fname::String, mode::String; lock::Bool)
+│     @ Base .\iostream.jl:358
+│   [6] open(fname::String, mode::String)
+│     @ Base .\iostream.jl:357
+│   [7] open(::Plots.var"#348#349"{Plots.Plot{Plots.GRBackend}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+│     @ Base .\io.jl:408
+│   [8] open
+│     @ .\io.jl:407 [inlined]
+│   [9] png(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:5
+│  [10] savefig(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:148
+│  [11] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:35
+│  [12] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:15
+│  [13] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_2"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│  [14] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│  [15] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│  [16] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│  [17] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│  [18] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│  [19] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [20] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [21] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [22] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [23] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [24] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [25] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [26] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [27] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [28] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [29] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [30] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [31] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [32] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [33] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [34] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [35] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [36] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Info: 2025-09-06 16:16:49 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:17:00 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:17:10 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 16:17:12 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 16:17:12 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Error: 2025-09-06 16:17:17 SystemError: opening file "C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp\\public\\image\\bondgraph.png": No such file or directory
+│ Stacktrace:
+│   [1] systemerror(p::String, errno::Int32; extrainfo::Nothing)
+│     @ Base .\error.jl:176
+│   [2] systemerror
+│     @ .\error.jl:175 [inlined]
+│   [3] open(fname::String; lock::Bool, read::Nothing, write::Nothing, create::Nothing, truncate::Bool, append::Nothing)
+│     @ Base .\iostream.jl:295
+│   [4] open
+│     @ .\iostream.jl:277 [inlined]
+│   [5] open(fname::String, mode::String; lock::Bool)
+│     @ Base .\iostream.jl:358
+│   [6] open(fname::String, mode::String)
+│     @ Base .\iostream.jl:357
+│   [7] open(::Plots.var"#348#349"{Plots.Plot{Plots.GRBackend}}, ::String, ::Vararg{String}; kwargs::@Kwargs{})
+│     @ Base .\io.jl:408
+│   [8] open
+│     @ .\io.jl:407 [inlined]
+│   [9] png(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:5
+│  [10] savefig(plt::Plots.Plot{Plots.GRBackend}, fn::String)
+│     @ Plots C:\Users\yosep\.julia\packages\Plots\xKhUG\src\output.jl:148
+│  [11] bondfunction()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:35
+│  [12] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:15
+│  [13] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_2"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│  [14] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│  [15] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│  [16] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│  [17] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│  [18] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│  [19] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│  [20] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [21] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [22] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [23] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [24] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [25] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [26] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [27] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [28] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [29] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [30] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [31] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [32] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [33] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [34] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [35] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [36] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Info: 2025-09-06 16:17:43 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:17:53 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:18:03 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:18:07 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:18:16 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:18:20 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:18:22 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:18:26 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:18:34 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:24:16 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 16:33:46 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:33:46 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:33:54 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:33:54 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:33:56 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 16:33:58 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 16:33:58 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Error: 2025-09-06 16:34:07 UndefVarError: `newfilename` not defined in `Main.App`
+│ Suggestion: check for spelling errors or missing imports.
+│ Stacktrace:
+│   [1] ui()
+│     @ Main.App C:\Users\yosep\OneDrive\Documents\hackathon\SIMGUI\MyGenieApp\app.jl:15
+│   [2] html!(data::typeof(Main.App.ui); context::Module, status::Int64, headers::Dict{String, String}, layout::String, forceparse::Bool, noparse::Bool, vars::@Kwargs{model::Main.App.var"Main.App_ReactiveModel!_2"})
+│     @ Genie.Renderer.Html C:\Users\yosep\.julia\packages\Genie\y1eGj\src\renderers\Html.jl:597
+│   [3] (::Stipple.Pages.var"#6#7"{typeof(Main.App.ui), String, Module, Int64, Int64, Module, Bool, @Kwargs{}, Page})()
+│     @ Stipple.Pages C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Pages.jl:90
+│   [4] run_route(r::Genie.Router.Route)
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:547
+│   [5] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Router C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:172
+│   [6] route_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Router.jl:147 [inlined]
+│   [7] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:300
+│   [8] handle_request
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:292 [inlined]
+│   [9] (::Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\macros.jl:123
+│  [10] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [11] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [12] #153
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:425 [inlined]
+│  [13] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#27#28"{HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}}, HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, @Kwargs{}}, print_error::Bool)
+│     @ Distributed C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\process_messages.jl:70
+│  [14] #remotecall_fetch#158
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:450 [inlined]
+│  [15] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:449 [inlined]
+│  [16] remotecall_fetch
+│     @ C:\Users\yosep\.julia\juliaup\julia-1.11.6+0.x64.w64.mingw32\share\julia\stdlib\v1.11\Distributed\src\remotecall.jl:492 [inlined]
+│  [17] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response; stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:344
+│  [18] setup_http_listener (repeats 2 times)
+│     @ C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:342 [inlined]
+│  [19] (::Genie.Server.var"#24#25"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:313
+│  [20] setup_http_streamer(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:333
+│  [21] (::Genie.Server.var"#6#12")(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.Connections.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:124
+│  [22] #invokelatest#2
+│     @ .\essentials.jl:1055 [inlined]
+│  [23] invokelatest
+│     @ .\essentials.jl:1052 [inlined]
+│  [24] handle_connection(f::Function, c::HTTP.Connections.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing, verbose::Bool)
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:469
+│  [25] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#6#12", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.Connections.Connection}, Int64, Nothing, ReentrantLock, Bool, Base.Semaphore, HTTP.Connections.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:401
+│ 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:356
+┌ Info: 2025-09-06 16:34:28 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:34:28 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:34:32 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 16:34:32 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:28:11 Watching ["C:\\Users\\yosep\\OneDrive\\Documents\\hackathon\\SIMGUI\\MyGenieApp"]
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:19
+┌ Info: 2025-09-06 18:28:13 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:28:18 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 18:28:18 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 18:34:53 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:40 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:37:40 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:40 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:40 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:40 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:42 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:37:46 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:37:46 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:46 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:46 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:46 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:52 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:37:52 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:52 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:52 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:56 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:37:56 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:56 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:56 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:56 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:58 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Info: 2025-09-06 18:37:58 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:37:58 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:38:04 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:38:11 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:38:33 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:38:38 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 18:38:41 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 18:38:41 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 18:38:54 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:39:00 Autoreloading
+└ @ GenieAutoReload C:\Users\yosep\.julia\packages\GenieAutoReload\qpImd\src\GenieAutoReload.jl:22
+┌ Error: 2025-09-06 18:39:00 KeyError("OOYLOUCNEHHRJKPYRQSLHTCHUWOHDZVL")
+└ @ Genie.WebChannels C:\Users\yosep\.julia\packages\Genie\y1eGj\src\WebChannels.jl:296
+┌ Info: 2025-09-06 18:39:00 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:39:00 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:42:37 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:44:06 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 18:44:08 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 18:44:08 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 18:44:26 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:46:20 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 18:46:24 Server on 127.0.0.1:8000 closing
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:409
+┌ Info: 2025-09-06 18:46:28 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 18:46:28 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers C:\Users\yosep\.julia\packages\HTTP\JcAHX\src\Servers.jl:382
+┌ Info: 2025-09-06 18:46:43 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:51:03 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:51:10 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540
+┌ Info: 2025-09-06 18:51:55 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server C:\Users\yosep\.julia\packages\Genie\y1eGj\src\Server.jl:182
+┌ Info: 2025-09-06 18:52:15 Calling finalizers
+└ @ Stipple C:\Users\yosep\.julia\packages\Stipple\hze8v\src\Stipple.jl:540

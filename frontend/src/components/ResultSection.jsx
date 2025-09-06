@@ -5,10 +5,21 @@ import Plotly from "plotly.js-dist-min";
 import data from "../assets/test_solution.json";
 
 
+
 const ResultSection = () => {
     const [isVisible, setIsVisible] = useState(false);
     const plotRef = useRef(null);
+    const [apiMessage, setApiMessage] = useState("");
 
+    const handleGetRequest = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/greet"); // Update URL if needed
+            const data = await response.json();
+            setApiMessage(data.message);
+        } catch (error) {
+            setApiMessage("Error fetching data");
+        }
+    };
     const toggleVisibility = () => setIsVisible((v) => !v);
 
     console.log(data)
@@ -53,6 +64,11 @@ const ResultSection = () => {
             <button className="toggle-button" onClick={toggleVisibility}>
                 {isVisible ? "Hide Result" : "Show Result"}
             </button>
+
+            <button className="get-button" onClick={handleGetRequest}>
+                Call Backend
+            </button>
+            {apiMessage && <div>{apiMessage}</div>}
 
             {isVisible && (
                 <div className="result-section">

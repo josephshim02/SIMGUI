@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Any
 import uvicorn
+from juliacall import Main as jl
+# from julia import Julia
+# from julia import Main
+
+
 
 app = FastAPI(
     title="SIMGUI Backend API",
@@ -36,6 +41,10 @@ class APIResponse(BaseModel):
 @app.get("/", response_model=APIResponse)
 async def root():
     """Root endpoint"""
+    
+    jl.println("Hello from Julia!")
+
+
     return APIResponse(
         success=True,
         data={"service": "SIMGUI Backend API"},

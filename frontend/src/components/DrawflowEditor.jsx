@@ -5,6 +5,16 @@ import './DrawflowEditor.css';
 import { checkRules } from './rules';
 import ResultSection from './ResultSection';
 
+function cleanDrawflowData(drawflowData) {
+  const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+  const usefulData = drawFlowDict.drawflow.Home.data;
+  for (const key in usefulData) {
+    delete usefulData[key].html;
+  }
+  drawFlowDict.drawflow.Home.data = usefulData;
+  return drawFlowDict;
+}
+
 const DrawflowEditor = () => {
   const drawflowRef = useRef(null);
   const editorRef = useRef(null);
@@ -316,7 +326,30 @@ const DrawflowEditor = () => {
         exportButton.disabled = true;
       }
 
-      // Send to Genie backend
+      var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+      const cleanedData = cleanDrawflowData(drawFlowDict);
+      console.log('Cleaned Data:', cleanedData);
+
+
+      for (const key in usefulData) {
+        if (usefulData.hasOwnProperty(key)) {
+            const value = usefulData[key];
+            
+            console.log(`${key}: ${value}`);
+            console.log(typeof value);
+            for (const innerKey in value) {
+              if (value.hasOwnProperty(innerKey)) {
+                  const innerValue = value[innerKey];
+                  console.log(`  ${innerKey}: ${innerValue}`);
+                  console.log(typeof innerValue);
+                  if (typeof innerValue === "string" && innerValue.includes("html")) {
+                    console.log("This is an HTML content");
+                  }
+              }
+            }
+        }
+    }
+      //Send to Genie backend
       const response = await fetch('http://localhost:8000/echo', {
         method: 'POST',
         headers: {

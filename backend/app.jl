@@ -1,4 +1,5 @@
 module App
+
 using Genie, Genie.Renderer.Json, Genie.Requests
 using HTTP
 include("DrawflowToBondGraph.jl")
@@ -7,17 +8,18 @@ using JSON
 
 # Configure CORS using Genie's built-in configuration
 Genie.Configuration.config!(
-  cors_allowed_origins = ["http://localhost:5173"],
+  cors_allowed_origins = ["*"],
   cors_headers = Dict(
-    "Access-Control-Allow-Methods" => "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers" => "Content-Type, Authorization",
-    "Access-Control-Allow-Credentials" => "true"
-  )
+        "Access-Control-Allow-Origin" => "*",        # <--- add this
+        "Access-Control-Allow-Methods" => "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers" => "Content-Type, Authorization",
+        "Access-Control-Allow-Credentials" => "true"
+    )
 )
 
 # Health check endpoint
-route("/api/health.html") do
-  HTML("Healthy")
+route("/") do
+  HTML("Healt436356hy")
 end
 
 # Echo endpoint for testing
@@ -31,6 +33,4 @@ route("/echo", method = POST) do
   solution_data |> json
 end
 
-# Start the server
-up(async = false)
 end

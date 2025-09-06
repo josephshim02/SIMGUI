@@ -1,0 +1,7 @@
+[deps]
+BondGraphs = "d1a4f103-cd9c-465b-aef3-7f12ef11bc98"
+Catalyst = "479239e8-5488-4da2-87a7-35f2df7eef83"
+Genie = "c43c736e-a2d1-11e8-161f-af95117fbd1e"
+GenieFramework = "a59fdf5c-6bf0-4f5d-949c-a137c9e2f353"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"

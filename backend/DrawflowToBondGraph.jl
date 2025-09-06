@@ -9,8 +9,7 @@ corresponding BondGraph components with proper connections.
 
 module DrawflowToBondGraph
 
-using BondGraphs
-using Plots
+import BondGraphs: BondGraph, Component, EqualEffort, EqualFlow, connect!, add_node!, simulate, constitutive_relationsusing, Plots
 using ModelingToolkit
 using JSON
 
@@ -34,7 +33,7 @@ Convert a Drawflow JSON file to a BondGraph model.
 bg, data = convert_drawflow_to_bondgraph("test.json")
 ```
 """
-function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bool=true)
+function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}, verbose::Bool=true)
     if verbose
         println("=== Drawflow JSON to BondGraph Converter ===")
         println()
