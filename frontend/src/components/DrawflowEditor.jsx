@@ -368,13 +368,47 @@ const DrawflowEditor = () => {
   };
 
 
-  const domainOptions = [
-    { name: "Mechanical (Translational)", f_store: "Mass",                 e_store: "Spring",                 se: "Force",               sf: "Velocity" },
-    { name: "Mechanical (Rotational)",    f_store: "Moment of Inertia",    e_store: "Torsional Spring",       se: "Torque",              sf: "Angular Velocity" },
-    { name: "Electrical",                  f_store: "Inductor",             e_store: "Capacitor",              se: "Voltage Source",      sf: "Current Source" },
-    { name: "Fluid",                       f_store: "Fluid Inertia",        e_store: "Compliance",             se: "Pressure Source",     sf: "Flow Source" },
-    { name: "Chemical",                    e_store: "Species Concentration",  se: "Chemical Potential Source", sf: "Reaction Rate Source" },
-  ];
+const domainOptions = [
+  { 
+    name: "Mechanical (Translational)", 
+    f_store: "Mass",                 
+    e_store: "Spring",                 
+    re: "Damper",
+    se: "Force",               
+    sf: "Velocity" 
+  },
+  { 
+    name: "Mechanical (Rotational)",    
+    f_store: "Moment of Inertia",    
+    e_store: "Torsional Spring",       
+    re: "Rotational Damper",
+    se: "Torque",              
+    sf: "Angular Velocity" 
+  },
+  { 
+    name: "Electrical",                  
+    f_store: "Inductor",             
+    e_store: "Capacitor",              
+    re: "Resistor",
+    se: "Voltage Source",      
+    sf: "Current Source" 
+  },
+  { 
+    name: "Fluid",                       
+    f_store: "Fluid Inertia",        
+    e_store: "Compliance",             
+    re: "Fluid Resistance",
+    se: "Pressure Source",     
+    sf: "Flow Source" 
+  },
+  { 
+    name: "Chemical",                    
+    e_store: "Species Concentration",  
+    re: "Reaction Resistance",
+    se: "Chemical Potential Source", 
+    sf: "Reaction Rate Source" 
+  },
+];
 
   const baseNodeTypes = [
     { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
