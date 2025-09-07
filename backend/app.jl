@@ -22,8 +22,8 @@ end
 route("/echo", method = POST) do
   json_data = JSON.parse(JSON.json(jsonpayload()))
   bg, enhanced_data = convert_drawflow_to_bondgraph(json_data, verbose=true)
-  time_of_simulation = json_data["drawflow"]["Simulation"]["time_of_simulation"] 
-  sol, relations = simulate_bondgraph(bg, tspan=(0.0, time_of_simulation), verbose=true)
+  simulation_data = json_data["drawflow"]["simulation"]
+  sol = simulate_bondgraph(bg, simulation_data=simulation_data, verbose=true)
   solution_data = save_solution_json(sol, include_metadata=true)
   return solution_data
 end

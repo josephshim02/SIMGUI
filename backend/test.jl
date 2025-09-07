@@ -12,29 +12,37 @@ println()
 
 using JSON
 
-data = JSON.parsefile("test.json")
+json_data = JSON.parsefile("test.json")
 
-println(data)
+println(json_data)
 
 # Convert JSON to BondGraph
-bg, data = convert_drawflow_to_bondgraph(data, verbose=true)
+bg, data = convert_drawflow_to_bondgraph(json_data, verbose=true)
 
-time_of_simulation = data["drawflow"]["Simulation"]["time_of_simulation"]
-# remove test_bondgraph.png
-rm("test_bondgraph.png")
-rm("test_simulation.png")
-rm("test_solution.json")
+simulation_data = json_data["drawflow"]["simulation"]
+
+# remove test_bondgraph.png if exists
+if isfile("test_bondgraph.png")
+    rm("test_bondgraph.png")
+end
+if isfile("test_simulation.png")
+    rm("test_simulation.png")
+end
+if isfile("test_solution.json")
+    rm("test_solution.json")
+end
+
 
 # Plot the BondGraph
 plot_bondgraph(bg, filename="test_bondgraph.png", title="Test BondGraph")
 
 # Simulate the BondGraph
-sol, relations = simulate_bondgraph(bg, tspan=(0.0, time_of_simulation), verbose=true)
+sol = simulate_bondgraph(bg, simulation_data=simulation_data, verbose=true) 
+
 
 # Print solution details
 if sol !== nothing
     println("\n=== SOLUTION DETAILS ===")
-    println("Solution type: $(typeof(sol))")
     println("Time points: $(length(sol.t))")
     println("Time range: $(sol.t[1]) to $(sol.t[end])")
     println("State variables: $(length(sol.u[1]))")

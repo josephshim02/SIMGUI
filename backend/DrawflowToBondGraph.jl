@@ -50,7 +50,7 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
 
 
     drawflow_data = json_data["drawflow"]["Home"]["data"]
-    simulation_data = json_data["drawflow"]["Simulation"]
+    simulation_data = json_data["drawflow"]["simulation"]
 
     if verbose
         println("Found $(length(drawflow_data)) nodes in the JSON file")
@@ -87,6 +87,11 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
             component.C = parse(Float64, node_data["data"]["param"])
             println("Successfully set C to $(component.C)")
             return component
+        elseif node_class == "ce_store"
+            component = Component(:Ce, "Ce_$node_id")
+            component.K = parse(Float64, node_data["data"]["param"])
+            println("Successfully set K to $(component.K)")
+            return component
         elseif node_class == "re"
             component = Component(:R, "R_$node_id")
             component.R = parse(Float64, node_data["data"]["param"])
@@ -119,13 +124,13 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
             component = Component(:Sf, "Sf_$node_id")
             input_function_type = node_data["data"]["input"]["type"]
             if input_function_type == "Unit Step Input"
-                component.sf = t -> 1
+                component.fs = t -> 1
             elseif input_function_type == "Sine Wave Input"
-                component.sf = t -> sin(t)
+                component.fs = t -> sin(t)
             elseif input_function_type == "Square Wave Input"
-                component.sf = t -> square(t)
+                component.fs = t -> square(t)
             else input_function_type == "Sawtooth Wave Input"
-                component.sf = t -> sawtooth(t)
+                component.fs = t -> sawtooth(t)
             end 
             return component
         else
@@ -249,37 +254,30 @@ Simulate a BondGraph model.
 
 # Example
 ```julia
-sol, relations = simulate_bondgraph(bg)
+sol = simulate_bondgraph(bg)
 ```
 """
-function simulate_bondgraph(bg::BondGraph; tspan::Tuple=(0.0, 5.0), u0::Vector=Float64[], verbose::Bool=true)
+function simulate_bondgraph(bg::BondGraph; simulation_data::Dict=Dict(), verbose::Bool=true)
     if verbose
         println("4. SIMULATING THE BONDGRAPH")
         println("=" ^ 50)
     end
 
-    try
-        if verbose
-            println("Generating constitutive relations...")
-        end
-        relations = constitutive_relations(bg; sub_defaults=true)
-        if verbose
-            println("Constitutive relations:")
-            println(relations)
-            println()
-        end
-        
+    tspan = (0.0, parse(Float64, simulation_data["time"]))
+    # u0 = [parse(Float64, val) for val in simulation_data["initial_values"]]
+
     
-        try
-            u0 = simulation_data["intial_conditions"]
-        catch e
-            if verbose
-                println("No initial conditions provided, using ones for all state variables")
-            end
-            u0 = ones(length(relations))
-        end
-        
-        
+    println("Generating constitutive relations...")
+    relations = constitutive_relations(bg; sub_defaults=true)
+    u0 = ones(length(relations))
+    println("Initial conditions: $u0")
+    if verbose
+        println("Constitutive relations:")
+        println(relations)
+        println()
+    end
+    
+    try
         if verbose
             println("Running simulation...")
             println("Time span: $tspan")
@@ -291,15 +289,13 @@ function simulate_bondgraph(bg::BondGraph; tspan::Tuple=(0.0, 5.0), u0::Vector=F
         if verbose
             println("Simulation completed successfully!")
         end
-        
-        return sol, relations
-        
+        return sol
     catch e
         if verbose
-            println("Could not generate constitutive relations or simulate: $e")
-            println("This might be due to the specific bond graph structure.")
+            println("Could not simulate: $e")
+            println("This might be due to the specific bond graph structure or the constitutive relations.")
         end
-        return nothing, nothing
+        return nothing
     end
 end
 
@@ -425,8 +421,7 @@ function save_solution_json(sol, filename::String="solution.json"; include_metad
     
     # Metadata
     if include_metadata
-        solution_data["metadata"] = Dict(
-            "solution_type" => string(typeof(sol)),
+        solution_data["metadata"] = Dict( 
             "num_timepoints" => length(sol.t),
             "num_states" => length(sol.u[1]),
             "time_range" => [sol.t[1], sol.t[end]],
