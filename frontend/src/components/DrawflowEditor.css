@@ -458,7 +458,7 @@
 }
 
 /* Modal */
-.modal {
+.modal-help {
     display: none;
     position: fixed;
     z-index: 7;
@@ -471,7 +471,7 @@
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.modal-content {
+.modal-content-help {
     position: relative;
     background-color: #fefefe;
     margin: 15% auto;
