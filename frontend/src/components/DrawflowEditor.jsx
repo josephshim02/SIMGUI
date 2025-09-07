@@ -51,11 +51,6 @@ function cleanDrawflowData(drawflowData) {
             param_dict["source"] = element.value;
         }
         usefulData[node_id].params = param_dict;
-        console.log("param_dict:", param_dict);
-        // const param = meta.body === 'param'  ? document.getElementById(`param-${node_id}`)
-        //               : meta.body === 'source' ? document.getElementById(`source-${node_id}`);
-
-        // console.log('param:', param.value);
     }
     drawFlowDict.drawflow.Home.data = usefulData;
     return drawFlowDict;
@@ -65,7 +60,6 @@ const DrawflowEditor = () => {
     const drawflowRef = useRef(null);
     const editorRef = useRef(null);
     const [data, setData] = useState(null);
-    const [isLocked, setIsLocked] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [currDomain, setCurrDomain] = useState(null);
     const hideTimerRef = useRef(null);
@@ -90,7 +84,7 @@ const DrawflowEditor = () => {
                 usefulData[node_id].name == "ce_store"
             ) {
                 const element = document.getElementById(`initial-${node_id}`);
-                console.log(element, node_id);
+
                 if (!element?.value) {
                     notify(
                         `Please fill in the Initial Value for node ID ${node_id}`,
@@ -248,7 +242,6 @@ const DrawflowEditor = () => {
 
         // render inner HTML using meta data
         const renderNodeHTML = (name, meta, getLabel) => {
-            console.log(meta.className === "e_store");
             const innerp =
                 meta.body === "param"
                     ? ParamField
@@ -256,7 +249,7 @@ const DrawflowEditor = () => {
                     ? SourceField
                     : "";
             const inneri =
-                meta.className === "e_store" || meta.className === "ce_store"
+                meta.className === "e_store" || meta.className === "ce_store" || meta.className === "f_store"
                     ? InitialValueField
                     : "";
 
@@ -407,34 +400,10 @@ const DrawflowEditor = () => {
 
     // event listeners
     const setupEventListeners = (editor) => {
-        editor.on("nodeCreated", (id) => {
-            console.log("Node created " + id);
-        });
-
-        editor.on("nodeRemoved", (id) => {
-            console.log("Node removed " + id);
-        });
-
-        editor.on("nodeSelected", (id) => {
-            console.log("Node selected " + id);
-        });
-
-        editor.on("moduleCreated", (name) => {
-            console.log("Module Created " + name);
-        });
-
-        editor.on("moduleChanged", (name) => {
-            console.log("Module Changed " + name);
-        });
-
         editor.on("connectionCreated", (connection) => {
             // Get the nodes involved in the connection
             const outputNode = editor.getNodeFromId(connection.output_id);
             const inputNode = editor.getNodeFromId(connection.input_id);
-
-            console.log(
-                `Attempting to connect ${outputNode.name} to ${inputNode.name}`
-            );
 
             // Check if connection is allowed using rules.js
             if (
@@ -453,7 +422,7 @@ const DrawflowEditor = () => {
                     connection.output_class
                 );
 
-                alert(
+                notify(
                     `Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`
                 );
                 // Show feedback to user
@@ -497,30 +466,24 @@ const DrawflowEditor = () => {
             var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
             const cleanedData = cleanDrawflowData(drawFlowDict);
             const durationInput = document.getElementById("duration");
-            cleanedData["drawflow"]["Simulation"] = {
+            cleanedData["drawflow"]["simulation"] = {
                 time: durationInput.value || 5,
             };
 
-            const usefulData = drawFlowDict.drawflow.Home.data;
-            const initialValues = [];
-            for (const node_id in usefulData) {
-                if (usefulData[node_id].name == "e_store") {
-                    const element = document.getElementById(
-                        `initial-${node_id}`
-                    );
-                    if (element && element.value) {
-                        initialValues.push(element.value);
-                    }
-                }
-            }
-            const simulationParameters = {
-                time: durationInput.value || 5,
-                initial_values: initialValues,
-            };
+            // const usefulData = drawFlowDict.drawflow.Home.data;
+            // const initialValues = [];
+            // for (const node_id in usefulData) {
+            //   if (usefulData[node_id].name == 'e_store') {
+            //     const element = document.getElementById(`initial-${node_id}`);
+            //     if (element && element.value) {
+            //       initialValues.push(element.value);
+            //     }
+            //   }
+            // }
+            // const simulationParameters = { 'time': durationInput.value || 5, 'initial_values': initialValues };
 
-            cleanedData["drawflow"]["simulation"] = simulationParameters;
-
-            console.log("Cleaned Data:", cleanedData);
+            // cleanedData['drawflow']['simulation'] = simulationParameters;
+            console.log("Cleaned Data to send:", cleanedData);
 
             const response = await fetch(
                 "https://338db935306a.ngrok-free.app/echo",
@@ -548,51 +511,6 @@ const DrawflowEditor = () => {
             }
         }
     };
-
-    const handleClear = () => {
-        if (editorRef.current) {
-            editorRef.current.clearModuleSelected();
-        }
-    };
-
-    const handleLockToggle = () => {
-        if (editorRef.current) {
-            if (isLocked) {
-                editorRef.current.editor_mode = "edit";
-            } else {
-                editorRef.current.editor_mode = "fixed";
-            }
-            setIsLocked(!isLocked);
-        }
-    };
-
-    const handleZoomIn = () => {
-        if (editorRef.current) {
-            editorRef.current.zoom_in();
-        }
-    };
-
-    const handleZoomOut = () => {
-        if (editorRef.current) {
-            editorRef.current.zoom_out();
-        }
-    };
-
-    const handleZoomReset = () => {
-        if (editorRef.current) {
-            editorRef.current.zoom_reset();
-        }
-    };
-
-    const nodeTypes = [
-        { type: "f_store", symbol: "I", label: "Inertia" },
-        { type: "e_store", symbol: "C", label: "Capacitance" },
-        { type: "re", symbol: "R", label: "Resistance" },
-        { type: "se", symbol: "Se", label: "SE" },
-        { type: "sf", symbol: "Sf", label: "SF" },
-        { type: "f_junc", symbol: "1", label: "1" },
-        { type: "e_junc", symbol: "0", label: "0" },
-    ];
 
     return (
         <div className="drawflow-app">
@@ -635,48 +553,6 @@ const DrawflowEditor = () => {
                         </div>
                     ))}
                 </div>
-
-                <div className={`col-right ${isVisible ? "with-result" : ""}`}>
-                    <div className="menu">
-                        <ul>
-                            <li onClick={checkNodeParams}>Export</li>{" "}
-                            {/* open modal instead of handleExport */}
-                            <li onClick={handleClearClick}>Clear</li>
-                            <li>
-                                Domain:
-                                <select
-                                    value={currDomain?.name ?? ""}
-                                    onChange={(e) => {
-                                        const d = domainOptions.find(
-                                            (x) => x.name === e.target.value
-                                        );
-                                        setCurrDomain(d ?? null);
-                                    }}
-                                >
-                                    <option value="">
-                                        -- General (Select a Domain) --
-                                    </option>
-                                    {domainOptions.map((d) => (
-                                        <option key={d.name} value={d.name}>
-                                            {d.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div
-                        key={node.type}
-                        className="drag-drawflow"
-                        draggable="true"
-                        onDragStart={(e) => handleDragStart(e, node.type)}
-                    >
-                        <span className="node-symbol">{node.symbol}</span>
-                        <span> {getLabel(node.type)}</span>
-                    </div>
-                </div>
-
                 <div className={`col-right ${isVisible ? "with-result" : ""}`}>
                     <div className="menu">
                         <ul>
@@ -712,34 +588,7 @@ const DrawflowEditor = () => {
                         ref={drawflowRef}
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
-                    >
-                        <div
-                            className="modal-content"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    sendToBackend();
-                                }}
-                            >
-                                <h2>Choose simulation parameters</h2>
-                                <label>
-                                    Duration (seconds):
-                                    <input
-                                        id="duration"
-                                        type="number"
-                                        name="duration"
-                                        defaultValue="5"
-                                        min="1"
-                                        step="1"
-                                        required
-                                    />
-                                </label>
-                                <button type="submit">Start Simulation</button>
-                            </form>
-                        </div>
-                    </div>
+                    ></div>
                 </div>
                 <ResultSection
                     setIsVisible={setIsVisible}
@@ -762,6 +611,7 @@ const DrawflowEditor = () => {
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 sendToBackend();
+                                closeModal();
                             }}
                         >
                             <h2>Choose simulation parameters</h2>
