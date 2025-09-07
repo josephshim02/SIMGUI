@@ -4,6 +4,7 @@ import 'drawflow/dist/drawflow.min.css';
 import './DrawflowEditor.css';
 import { checkRules } from './rules';
 import ResultSection from './ResultSection';
+import ConnectionRulesPopup from './ConnectionRulesPopup';
 
 
 // meta about node: io = [inputs, outputs]；body = 'param' | 'source' | 'none'
@@ -13,9 +14,11 @@ const makeMeta = (symbol, io, className, body) =>
 // preset 7 type of nodes, make those as objects where omit the fields
 const NODE_META = {
   // Parameter-type: 1 in, 1 out, with parameter
-  f_store: makeMeta('I', [1, 1], 'f_store', 'param'),
-  e_store: makeMeta('C', [1, 1], 'e_store', 'param'),
-  re: makeMeta('R', [1, 1], 're', 'param'),
+  f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
+  e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
+  re:      makeMeta('R',  [1,1], 're',      'param'),
+  rxn:      makeMeta('Re',  [1,1], 'rxn',      'param'),
+
 
   // Source-type: only 1 out, with source
   se: makeMeta('Se', [0, 1], 'se', 'source'),
@@ -62,6 +65,13 @@ const DrawflowEditor = () => {
   const [isLocked, setIsLocked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currDomain, setCurrDomain] = useState(null);
+  const hideTimerRef = useRef(null);
+  const clearConfirmUntilRef = useRef(0);
+  const [banner, setBanner] = useState({
+    visible: false,
+    message: '',
+    type: 'info',   // 'success' | 'error' | 'warning' | 'info'
+  });
   //For pop submit window
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
@@ -118,16 +128,44 @@ const DrawflowEditor = () => {
     };
   }, []);
 
+  const notify = (message, type = 'info', duration = 3000) => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    setBanner({ visible: true, message, type });
+    hideTimerRef.current = setTimeout(() => {
+      setBanner(prev => ({ ...prev, visible: false }));
+      hideTimerRef.current = null;
+    }, duration);
+  };
+
+  const closeBanner = () => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    setBanner(prev => ({ ...prev, visible: false }));
+  };
+
   const drawflowAPI = {
     exportJSON: () => editorRef.current?.export(),
     clear: () => editorRef.current?.clearModuleSelected(),
     changeModule: (m) => editorRef.current?.changeModule(m),
     setLockedMode: locked =>
       editorRef.current && (editorRef.current.editor_mode = locked ? 'fixed' : 'edit'),
-    zoomIn: () => editorRef.current?.zoom_in(),
-    zoomOut: () => editorRef.current?.zoom_out(),
-    zoomReset: () => editorRef.current?.zoom_reset(),
-    addNodeAt: (t, x, y) => addNodeToDrawFlow(t, x, y),
+    zoomIn:     () => editorRef.current?.zoom_in(),
+    zoomOut:    () => editorRef.current?.zoom_out(),
+    zoomReset:  () => editorRef.current?.zoom_reset(),
+    addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
+    currentModule: () => editorRef.current?.module,
+    setNodeTitle: (id, symbol, label) => {
+      const editor = editorRef.current;
+      if (!editor) return;
+      const titleEl = editor.precanvas.querySelector(`#node-${id} .title-box`);
+      if (titleEl) titleEl.innerHTML = `<span class="node-symbol">${symbol}</span> ${label}`;
+    },
+
   }
 
   const handleLockToggle = () => {
@@ -215,6 +253,7 @@ const DrawflowEditor = () => {
     } catch (error) {
       console.error('Error sending data to backend:', error);
       //alert('Error connecting to backend: ' + error.message);
+      notify('Error connecting to backend: + error.message', error)
     } finally {
       // Reset button state
       const exportButton = document.querySelector('.export-btn');
@@ -253,8 +292,9 @@ const DrawflowEditor = () => {
 
     // Clean up the URL object
     URL.revokeObjectURL(url);
+    
+    notify('Exported JSON successfully.', 'success');
 
-    alert('Drawflow data exported and downloaded as JSON file!');
   };
 
 
@@ -274,9 +314,6 @@ const DrawflowEditor = () => {
 
 
     // format of origin addNode: editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
-
-
-
 
     // wrap of nodes, where each symbol has letter in a circle, have title and inner HTML
     const wrap = (symbol, title, innerp = '', inneri = '') => `
@@ -315,9 +352,9 @@ const DrawflowEditor = () => {
       style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
       onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
         <option param="unit-step">Unit Step Input</option>
-        <option param="sinusoidal">Sinusoidal Input</option>
+        <option param="sine-wave">Sine Wave Input</option>
         <option param="square-wave">Square Wave Input</option>
-        <option param="impulse">Impulse Input</option>
+        <option param="sawtooth-wave">Sawtooth Wave Input</option>
     </select>
     `;
     setNodeCounter(prev => prev + 1);
@@ -334,9 +371,16 @@ const DrawflowEditor = () => {
     };
 
     const m = NODE_META[name];
+    const defaultData =
+      m.body === "param"
+        ? { param: "1.0" }
+        : m.body === "source"
+        ? { input: { type: "Unit Step Input" } }
+        : {};
     if (m) {
       const html = renderNodeHTML(name, m, getLabel);
-      editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
+      // editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
+      editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, defaultData, html);
       return;
     } else {
       console.warn('Unknown node type:', name);
@@ -344,52 +388,54 @@ const DrawflowEditor = () => {
     }
   };
 
-  const domainOptions = [
-    {
-      name: "Mechanical (Force)",
-      f_store: "Mass",
-      e_store: "Spring",
-      re: "Damper",
-      se: "Force",
-      sf: "Velocity"
-    },
-    {
-      name: "Mechanical (Torque)",
-      f_store: "Moment of Inertia",
-      e_store: "Torsional Spring",
-      re: "Rotational Damper",
-      se: "Torque",
-      sf: "Angular Velocity"
-    },
-    {
-      name: "Electrical (Voltage)",
-      f_store: "Inductor",
-      e_store: "Capacitor",
-      re: "Resistor",
-      se: "Voltage Source",
-      sf: "Current Source"
-    },
-    {
-      name: "Fluid (Pressure/Force)",
-      f_store: "Fluid Inertia",
-      e_store: "Compliance",
-      re: "Fluid Resistance",
-      se: "Pressure Source",
-      sf: "Flow Source"
-    },
-    {
-      name: "Chemical (Chemical Potential)",
-      e_store: "Molar Concentration",
-      re: "Reaction Resistance",
-      se: "Chemical Potential",
-      sf: "Reaction Rate Source"
-    },
-  ];
+const domainOptions = [
+  { 
+    name: "Mechanical (Force)", 
+    f_store: "Mass",                 
+    e_store: "Spring",                 
+    re: "Damper",
+    se: "Force",               
+    sf: "Velocity" 
+  },
+  { 
+    name: "Mechanical (Torque)",    
+    f_store: "Moment of Inertia",    
+    e_store: "Torsional Spring",       
+    re: "Rotational Damper",
+    se: "Torque",              
+    sf: "Angular Velocity" 
+  },
+  { 
+    name: "Electrical (Voltage)",                  
+    f_store: "Inductor",             
+    e_store: "Capacitor",              
+    re: "Resistor",
+    se: "Voltage Source",      
+    sf: "Current Source" 
+  },
+  { 
+    name: "Fluid (Pressure/Force)",                       
+    f_store: "Fluid Inertia",        
+    e_store: "Compliance",             
+    re: "Fluid Resistance",
+    se: "Pressure Source",     
+    sf: "Flow Source" 
+  },
+  { 
+    name: "Chemical (Chemical Potential)",                    
+    e_store: "Molar Concentration",  
+    re: "Reaction Resistance",
+    rxn: "Chemical Reaction",
+    se: "Chemical Potential", 
+    sf: "Reaction Rate Source" 
+  },
+];
 
   const baseNodeTypes = [
     { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
     { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
     { type: "re", symbol: "R", defaultLabel: "Resistance" },
+    { type: "rxn", symbol: "Re", defaultLabel: "Chemical Reaction" },
     { type: "se", symbol: "Se", defaultLabel: "SE" },
     { type: "sf", symbol: "Sf", defaultLabel: "SF" },
     { type: "f_junc", symbol: "1", defaultLabel: "1" },
@@ -406,7 +452,44 @@ const DrawflowEditor = () => {
       ?? type;
   };
 
-  // event listeners for debug usages
+  const labels = React.useMemo(() => {
+    return {
+      refreshAll() {
+        const exp = drawflowAPI.exportJSON?.();
+        const mod = drawflowAPI.currentModule?.();
+        if (!exp || !mod) return;
+        const data = exp.drawflow?.[mod]?.data || {};
+        for (const idStr in data) {
+          const nodeName = data[idStr]?.name;
+          const meta = NODE_META[nodeName];
+          if (!meta) continue;
+          drawflowAPI.setNodeTitle(Number(idStr), meta.symbol, getLabel(nodeName));
+        }
+      }
+    };
+  }, [drawflowAPI, currDomain]);
+
+  // lables refresh logic
+  useEffect(() => {
+    if (!editorRef.current) return;
+    labels.refreshAll();
+  }, [currDomain, labels]);
+
+const handleClearClick = () => {
+    const now = Date.now();
+    if (now <= clearConfirmUntilRef.current) {
+      clearConfirmUntilRef.current = 0;
+      drawflowAPI.clear();
+      notify('Canvas cleared.', 'success');
+    } else {
+      clearConfirmUntilRef.current = now + 2500;
+      notify('Press "Clear" again to confirm.', 'warning');
+    }
+  };
+
+
+
+  // event listeners
   const setupEventListeners = (editor) => {
     editor.on("nodeCreated", (id) => {
       console.log("Node created " + id);
@@ -448,14 +531,14 @@ const DrawflowEditor = () => {
         console.log("Connection not allowed by rules");
         // Remove the invalid connection
         editor.removeSingleConnection(
-          connection.output_id,
-          connection.input_id,
-          connection.output_class,
-          connection.input_class
-        );
+                connection.output_id,
+                connection.input_id, 
+                connection.output_class,
+                connection.input_class
+            );
+        
+        notify(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`, 'error');
 
-        alert(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`);
-        // Show feedback to user
         console.log(`Connection blocked: ${outputNode.name} cannot connect to ${inputNode.name}`);
       }
     });
@@ -493,9 +576,20 @@ const DrawflowEditor = () => {
 
   return (
     <div className="drawflow-app">
+      <ConnectionRulesPopup />
       <header>
         <h2>Drawflow</h2>
       </header>
+    {banner.visible && (
+      <div
+        className={`banner banner--${banner.type}`}
+        role={(banner.type === 'error' || banner.type === 'warning') ? 'alert' : 'status'}
+        aria-live="polite"
+      >
+        <span className="banner__text">{banner.message}</span>
+        <button className="banner__close" onClick={closeBanner} aria-label="Close notification">×</button>
+      </div>
+    )}
 
       <div className="wrapper">
         <div className="col">
@@ -542,7 +636,7 @@ const DrawflowEditor = () => {
             onDragOver={handleDragOver}
           >
             <div className="btn-lock" onClick={handleLockToggle}>
-              <i className={`fas ${isLocked ? 'fa-lock-open' : 'fa-lock'}`}></i>
+              <i className={`fas ${isLocked ? 'fa-lock' : 'fa-lock-open'}`}></i>
             </div>
             <div className="bar-zoom">
               <i className="fas fa-search-minus" onClick={drawflowAPI.zoomOut}></i>
@@ -552,6 +646,7 @@ const DrawflowEditor = () => {
           </div>
         </div>
         <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} />
+
       </div>
 
       {/* Modal */}
