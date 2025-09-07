@@ -542,7 +542,7 @@ const domainOptions = [
             onDragOver={handleDragOver}
           >
             <div className="btn-lock" onClick={handleLockToggle}>
-              <i className={`fas ${isLocked ? 'fa-lock-open' : 'fa-lock'}`}></i>
+              <i className={`fas ${isLocked ? 'fa-lock' : 'fa-lock-open'}`}></i>
             </div>
             <div className="bar-zoom">
               <i className="fas fa-search-minus" onClick={drawflowAPI.zoomOut}></i>
