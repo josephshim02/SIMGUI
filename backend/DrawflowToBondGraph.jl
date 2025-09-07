@@ -398,9 +398,7 @@ function save_solution_json(sol, filename::String="solution.json"; include_metad
             "showgrid" => true
         ),
         "hovermode" => "x unified",
-        "showlegend" => true,
-        "width" => 800,
-        "height" => 600
+        "showlegend" => true
     )
     
     # Metadata

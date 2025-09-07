@@ -2,16 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import image1 from "../assets/image1.png";
 import "./ResultSection.css";
 import Plotly from "plotly.js-dist-min";
-import data from "../assets/test_solution.json";
 
 
-const ResultSection = () => {
-    const [isVisible, setIsVisible] = useState(false);
+const ResultSection = ({isVisible, setIsVisible, data}) => {
     const plotRef = useRef(null);
 
     const toggleVisibility = () => setIsVisible((v) => !v);
-
-    console.log(data)
 
     useEffect(() => {
         if (!isVisible) return;
@@ -19,11 +15,14 @@ const ResultSection = () => {
         const node = plotRef.current;
         if (!node) return;
 
+        if(!data) return ;
+
         // create the plot once when the panel becomes visible
         // Use the JSON's traces/layout and enable Plotly's responsive handler
-        const traces = data.traces ?? data;
-        const layout = data.layout ?? { title: "Data Plot" };
+        const traces = data?.traces ?? data;
+        const layout = data?.layout ?? { title: "Data Plot" };
         const config = { responsive: true, useResizeHandler: true };
+
         Plotly.newPlot(node, traces, layout, config);
 
         // resize handlers: window resize + ResizeObserver for container changes
