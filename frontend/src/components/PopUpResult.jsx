@@ -1,9 +1,9 @@
 import { useState } from "react";
-import image1 from "../assets/image1.png";
 import "./PopUpResult.css";
 
 const PopUpResult = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleClose = () => setIsOpen(false);
     const handleOpen = () => setIsOpen(true);
@@ -24,11 +24,6 @@ const PopUpResult = () => {
                         >
                             &times;
                         </button>
-                        <img
-                            src={image1}
-                            alt="Popup"
-                            className="popup-image"
-                        />
                     </div>
                 </div>
             )}

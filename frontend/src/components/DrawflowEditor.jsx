@@ -86,7 +86,7 @@ const DrawflowEditor = () => {
         const element = document.getElementById(`initial-${node_id}`);
         console.log(element, node_id);
         if (!element?.value) {
-          notify(`Please fill in the Initial Value for node ID ${node_id}`, "error");
+          notify(`Please fill in the Initial Value for ${usefulData[node_id].name}`, "error");
           return 0;
         }
       }
@@ -219,8 +219,8 @@ const addNodeToDrawFlow = (name, pos_x, pos_y) => {
 
   const SourceField =
     `<p>Input Type:</p>
-    <select df-input-type
-      id="source-${nodeCounter}"  // give unique id to each select field
+    <select class="styled-select" df-input-type
+      id="source-${nodeCounter}" 
       style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
       onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
         <option param="unit-step">Unit Step Input</option>
@@ -418,12 +418,13 @@ const setupEventListeners = (editor) => {
         connection.output_id,
         connection.input_id,
         connection.output_class,
+        connection.input_class
       );
 
-      alert(
+      notify(
         `Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`
+        , "error"
       );
-      // Show feedback to user
     }
   });
 
@@ -497,7 +498,7 @@ const sendToBackend = async () => {
     setIsVisible(1);
 
   } catch (error) {
-    alert("Error connecting to backend: " + error.message);
+    notify(`Error connecting to backend: ${error.message}`, 'error');
   } finally {
     // Reset button state
     const exportButton = document.querySelector(".export-btn");
@@ -589,11 +590,12 @@ const nodeTypes = [
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li onClick={checkNodeParams}>Export</li>  {/* open modal instead of handleExport */}
+              <li className="run-menu-item" onClick={checkNodeParams}>Run</li>
               <li onClick={handleClearClick}>Clear</li>
               <li>
                 Domain:
                 <select
+                  className="styled-select"
                   value={currDomain?.name ?? ""}
                   onChange={(e) => {
                     const d = domainOptions.find(x => x.name === e.target.value);
@@ -609,69 +611,12 @@ const nodeTypes = [
             </ul>
           </div>
 
-
-          <div
-            key={node.type}
-            className="drag-drawflow"
-            draggable="true"
-            onDragStart={(e) => handleDragStart(e, node.type)}
-          >
-            <span className="node-symbol">{node.symbol}</span>
-            <span> {getLabel(node.type)}</span>
-          </div>
-      </div>
-
-      <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
-        <div className="menu">
-          <ul>
-            <li onClick={checkNodeParams}>Export</li>  {/* open modal instead of handleExport */}
-            <li onClick={drawflowAPI.clear}>Clear</li>
-            <li>
-              Domain:
-              <select
-                value={currDomain?.name ?? ""}
-                onChange={(e) => {
-                  const d = domainOptions.find(x => x.name === e.target.value);
-                  setCurrDomain(d ?? null);
-                }}
-              >
-                <option value="">-- General (Select a Domain) --</option>
-                {domainOptions.map(d => (
-                  <option key={d.name} value={d.name}>{d.name}</option>
-                ))}
-              </select>
-            </li>
-          </ul>
-        </div>
-
         <div
           id="drawflow"
           ref={drawflowRef}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <form onSubmit={(e) => {
-                e.preventDefault();
-                sendToBackend();
-              }}>
-                <h2>Choose simulation parameters</h2>
-                <label>
-                  Duration (seconds):
-                  <input 
-                    id="duration" 
-                    type="number"
-                    name="duration" 
-                    defaultValue="5" 
-                    min="1"           
-                    step="1"         
-                    required 
-                  />
-                </label>
-                <button type="submit">Start Simulation</button>
-              </form>
-
-          </div>
         </div>
       </div>
       <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} data={data} />
