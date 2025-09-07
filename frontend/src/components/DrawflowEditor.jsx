@@ -66,6 +66,7 @@ const DrawflowEditor = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currDomain, setCurrDomain] = useState(null);
   const hideTimerRef = useRef(null);
+  const clearConfirmUntilRef = useRef(0);
   const [banner, setBanner] = useState({
     visible: false,
     message: '',
@@ -272,9 +273,6 @@ const DrawflowEditor = () => {
     
     // format of origin addNode: editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
 
-
-
-
     // wrap of nodes, where each symbol has letter in a circle, have title and inner HTML
     const wrap = (symbol, title, inner = '') => `
       <div>
@@ -414,6 +412,19 @@ const domainOptions = [
     labels.refreshAll();
   }, [currDomain, labels]);
 
+const handleClearClick = () => {
+    const now = Date.now();
+    if (now <= clearConfirmUntilRef.current) {
+      clearConfirmUntilRef.current = 0;
+      drawflowAPI.clear();
+      notify('Canvas cleared.', 'success');
+    } else {
+      clearConfirmUntilRef.current = now + 2500;
+      notify('Press "Clear" again to confirm.', 'warning');
+    }
+  };
+
+
 
   // event listeners
   const setupEventListeners = (editor) => {
@@ -534,7 +545,7 @@ const domainOptions = [
           <div className="menu">
             <ul>
               <li onClick={handleExport}>Export</li>
-              <li onClick={drawflowAPI.clear}>Clear</li>
+              <li onClick={handleClearClick}>Clear</li>
               <li>
                 Domain:
                   <select
