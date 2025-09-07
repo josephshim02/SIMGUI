@@ -6,7 +6,7 @@ A Julia module for converting Drawflow JSON files to BondGraph models.
 This module provides functionality to parse Drawflow node data and create
 corresponding BondGraph components with proper connections.
 """
-
+__precompile__(false)
 module DrawflowToBondGraph
 
 using BondGraphs
@@ -50,6 +50,7 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
 
 
     drawflow_data = json_data["drawflow"]["Home"]["data"]
+    simulation_data = json_data["drawflow"]["Simulation"]
 
     if verbose
         println("Found $(length(drawflow_data)) nodes in the JSON file")
@@ -143,6 +144,51 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
     if verbose
         println()
     end
+
+
+    println(component_map)
+    #iterate over component_map and print the variables
+    for (node_id, component) in component_map
+        # if component value 
+        if(component isa EqualEffort || component isa EqualFlow)
+            println("EqualEffort or EqualFlow")
+        else
+            # Debug: Explore component attributes (Julia equivalent of Python's dir())
+            println("=== Component Debug Info ===")
+            println("Component type: ", typeof(component))
+            println("Component: ", component)
+            
+            # Method 1: Use fieldnames() to see available fields
+            try
+                fields = fieldnames(typeof(component))
+                println("Available fields: ", fields)
+                
+                # Try to access each field
+                for field in fields
+                    try
+                        value = getfield(component, field)
+                        println("  $field: $value (type: $(typeof(value)))")
+                    catch e
+                        println("  $field: Error accessing - $e")
+                    end
+                end
+            catch e
+                println("Error getting fieldnames: $e")
+            end
+ 
+            try
+                println(component["variables"])
+            catch e
+                println("Error calling variables(): $e")
+            end
+            
+          
+            
+            println("=== End Debug Info ===")
+        end
+    end
+
+
 
     # Add all components to the BondGraph
     if verbose
