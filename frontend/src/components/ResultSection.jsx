@@ -2,11 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import image1 from "../assets/image1.png";
 import "./ResultSection.css";
 import Plotly from "plotly.js-dist-min";
-import data from "../assets/test_solution.json";
 
 
-const ResultSection = () => {
-    const [isVisible, setIsVisible] = useState(false);
+const ResultSection = ({isVisible, setIsVisible, data}) => {
     const plotRef = useRef(null);
 
     const toggleVisibility = () => setIsVisible((v) => !v);
