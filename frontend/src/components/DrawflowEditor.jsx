@@ -466,7 +466,6 @@ const sendToBackend = async () => {
     var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
     const cleanedData = cleanDrawflowData(drawFlowDict);
     const durationInput = document.getElementById('duration');
-    cleanedData['drawflow']['Simulation'] = { 'time': durationInput.value || 5 };
 
     const usefulData = drawFlowDict.drawflow.Home.data;
     const initialValues = [];
