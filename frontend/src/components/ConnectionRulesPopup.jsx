@@ -15,7 +15,7 @@ const ConnectionRulesPopup = () => {
         title="Connection Rules Help"
         style={{
           position: 'fixed',
-          top: '70px',
+          top: '75px',
           right: '20px',
           width: '40px',
           height: '40px',
@@ -66,7 +66,7 @@ const ConnectionRulesPopup = () => {
         >
           {/* Modal content */}
           <div 
-            className="modal-content"
+            className="modal-content-help"
             style={{
               backgroundColor: 'white',
               borderRadius: '8px',
