@@ -1,8 +1,8 @@
 module App
 using Genie, Genie.Renderer.Json, Genie.Requests
 using HTTP
-# include("DrawflowToBondGraph.jl")
-# using .DrawflowToBondGraph
+include("DrawflowToBondGraph.jl")
+using .DrawflowToBondGraph
 using JSON
 
 Genie.Configuration.config!(
@@ -27,10 +27,14 @@ end
 # end
 
 route("/echo", method = POST) do
-  println("Raw payload: ", rawpayload())
-  return Json.json(jsonpayload())
+  json_data = JSON.parse(JSON.json(jsonpayload()))
+  bg, enhanced_data = convert_drawflow_to_bondgraph(json_data, verbose=true)
+  simulation_data = json_data["drawflow"]["simulation"]
+  sol = simulate_bondgraph(bg, simulation_data=simulation_data, verbose=true)
+  solution_data = save_solution_json(sol, include_metadata=true)
+  return solution_data
 end
 
-#up(async = false)
+up(async = false)
 
 end

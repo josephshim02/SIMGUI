@@ -238,7 +238,7 @@ const addNodeToDrawFlow = (name, pos_x, pos_y) => {
         : meta.body === 'source' ? SourceField
           : '';
       const inneri =
-        (meta.className === 'e_store' || meta.className === 'ce_store')
+        (meta.className === 'e_store' || meta.className === 'ce_store') || meta.className === 'f_store'
           ? InitialValueField
           : '';
 
@@ -466,22 +466,9 @@ const sendToBackend = async () => {
     var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
     const cleanedData = cleanDrawflowData(drawFlowDict);
     const durationInput = document.getElementById('duration');
-
-    const usefulData = drawFlowDict.drawflow.Home.data;
-    const initialValues = [];
-    for (const node_id in usefulData) {
-      if (usefulData[node_id].name == 'e_store') {
-        const element = document.getElementById(`initial-${node_id}`);
-        if (element && element.value) {
-          initialValues.push(element.value);
-        }
-      }
-    }
-    const simulationParameters = { 'time': durationInput.value || 5, 'initial_values': initialValues };
+    const simulationParameters = { 'time': durationInput.value || 5};
 
     cleanedData['drawflow']['simulation'] = simulationParameters;
-
-
     console.log('Cleaned Data:', cleanedData);
 
     const response = await fetch("https://338db935306a.ngrok-free.app/echo", {
@@ -633,6 +620,7 @@ const nodeTypes = [
           <form onSubmit={(e) => {
             e.preventDefault();
             sendToBackend();
+            closeModal();
           }}>
             <h2>Choose simulation parameters</h2>
             <label>

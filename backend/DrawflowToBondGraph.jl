@@ -8,13 +8,13 @@ corresponding BondGraph components with proper connections.
 """
 
 module DrawflowToBondGraph
-
 using BondGraphs
+
 using Plots
 using ModelingToolkit
 using JSON
 
-export convert_drawflow_to_bondgraph, simulate_bondgraph, plot_bondgraph, plot_simulation, save_solution_json
+export convert_drawflow_to_bondgraph, simulate_bondgraph, plot_bondgraph, plot_simulation, save_solution_json, set_component_parameter, get_component_parameter
 
 """
     convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
@@ -50,6 +50,7 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
 
 
     drawflow_data = json_data["drawflow"]["Home"]["data"]
+    simulation_data = json_data["drawflow"]["simulation"]
 
     if verbose
         println("Found $(length(drawflow_data)) nodes in the JSON file")
@@ -71,42 +72,66 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
     component_map = Dict{String, Any}()
 
     # Node type to BondGraph component mapping
-    function create_component(node_id, node_class, node_name)
-        # println("HELLLOOOOOO")
-        # println(BondGraphs.DEFAULT_LIBRARY)
-        # println("HELLLOOOOOO")
-        # println((BondGraphs.description(Component(:I))))
-        # println("passed")
-        # println((BondGraphs.description(Component(:C, "C_$node_id"))))
-        # println("HELLLOOOOOO")
-        # println((BondGraphs.description(Component(:R, "R_$node_id"))))
-        # println("HELLLOOOOOO")
-        # println((BondGraphs.description(Component(:Se, "Se_$node_id"))))
-        # println("HELLLOOOOOO")
-        # println((BondGraphs.description(Component(:Sf, "Sf_$node_id"))))
-        # print("done")
+    function create_component(node_data)
+        println(node_data)
+        node_id = node_data["id"]
+        node_class = node_data["class"]
+
         if node_class == "f_store"
             component = Component(:I, "I_$node_id")
-            # println(typeof(component))
-            # println(description(component))
-            # component.I = 10.0  # Set inertia parameter
+            component.L = parse(Float64, node_data["data"]["param"])
+            println("Successfully set L to $(component.L)")
             return component
         elseif node_class == "e_store"
             component = Component(:C, "C_$node_id")
-            # component.C = 2.0  # Set capacitance parameter
+            component.C = parse(Float64, node_data["data"]["param"])
+            println("Successfully set C to $(component.C)")
+            return component
+        elseif node_class == "ce_store"
+            component = Component(:Ce, "Ce_$node_id")
+            component.K = parse(Float64, node_data["data"]["param"])
+            println("Successfully set K to $(component.K)")
             return component
         elseif node_class == "re"
             component = Component(:R, "R_$node_id")
+            component.R = parse(Float64, node_data["data"]["param"])
+            println("Successfully set R to $(component.R)")
+            return component
+        elseif node_class == "rxn"
+            component = Component(:Re, "Re_$node_id")
+            component.r = parse(Float64, node_data["data"]["param"])
+            println("Successfully set r to $(component.r)")
             return component
         elseif node_class == "e_junc"
             return EqualEffort()
         elseif node_class == "f_junc"
             return EqualFlow()
         elseif node_class == "se"
-            return Component(:Se, "Se_$node_id")
+            component = Component(:Se, "Se_$node_id")
+            input_function_type = node_data["data"]["input"]["type"]
+            
+            if input_function_type == "Unit Step Input"
+                component.es = t -> 1
+            elseif input_function_type == "Sine Wave Input"
+                component.es = t -> sin(t)
+            elseif input_function_type == "Square Wave Input"
+                component.es = t -> square(t)
+            else input_function_type == "Sawtooth Wave Input"
+                component.es = t -> sawtooth(t)
+            end
+            return component
         elseif node_class == "sf"
             component = Component(:Sf, "Sf_$node_id")
-            component.fs = t -> sin(2t)  # Set source flow function
+            input_function_type = node_data["data"]["input"]["type"]
+            if input_function_type == "Unit Step Input"
+                component.fs = t -> 1
+            elseif input_function_type == "Sine Wave Input"
+                component.fs = t -> sin(t)
+            elseif input_function_type == "Square Wave Input"
+                component.fs = t -> square(t)
+            else input_function_type == "Sawtooth Wave Input"
+                component.fs = t -> sawtooth(t)
+            end 
             return component
         else
             if verbose
@@ -121,11 +146,8 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
         println("Creating components...")
     end
     for (node_id, node_data) in drawflow_data
+        component = create_component(node_data)
         node_class = node_data["class"]
-        node_name = node_data["name"]
-        
-        component = create_component(node_id, node_class, node_name)
-        
         if component !== nothing
             # Save component directly into node_data
             node_data["component"] = component
@@ -140,9 +162,6 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
         end
     end
 
-    if verbose
-        println()
-    end
 
     # Add all components to the BondGraph
     if verbose
@@ -235,31 +254,30 @@ Simulate a BondGraph model.
 
 # Example
 ```julia
-sol, relations = simulate_bondgraph(bg)
+sol = simulate_bondgraph(bg)
 ```
 """
-function simulate_bondgraph(bg::BondGraph; tspan::Tuple=(0.0, 10.0), u0::Vector=Float64[], verbose::Bool=true)
+function simulate_bondgraph(bg::BondGraph; simulation_data::Dict=Dict(), verbose::Bool=true)
     if verbose
         println("4. SIMULATING THE BONDGRAPH")
         println("=" ^ 50)
     end
 
+    tspan = (0.0, parse(Float64, simulation_data["time"]))
+    # u0 = [parse(Float64, val) for val in simulation_data["initial_values"]]
+
+    
+    println("Generating constitutive relations...")
+    relations = constitutive_relations(bg; sub_defaults=true)
+    u0 = ones(length(relations))
+    println("Initial conditions: $u0")
+    if verbose
+        println("Constitutive relations:")
+        println(relations)
+        println()
+    end
+    
     try
-        if verbose
-            println("Generating constitutive relations...")
-        end
-        relations = constitutive_relations(bg; sub_defaults=true)
-        if verbose
-            println("Constitutive relations:")
-            println(relations)
-            println()
-        end
-        
-        # Set initial conditions if not provided
-        if isempty(u0)
-            u0 = ones(length(relations))
-        end
-        
         if verbose
             println("Running simulation...")
             println("Time span: $tspan")
@@ -271,15 +289,13 @@ function simulate_bondgraph(bg::BondGraph; tspan::Tuple=(0.0, 10.0), u0::Vector=
         if verbose
             println("Simulation completed successfully!")
         end
-        
-        return sol, relations
-        
+        return sol
     catch e
         if verbose
-            println("Could not generate constitutive relations or simulate: $e")
-            println("This might be due to the specific bond graph structure.")
+            println("Could not simulate: $e")
+            println("This might be due to the specific bond graph structure or the constitutive relations.")
         end
-        return nothing, nothing
+        return nothing
     end
 end
 
@@ -403,8 +419,7 @@ function save_solution_json(sol, filename::String="solution.json"; include_metad
     
     # Metadata
     if include_metadata
-        solution_data["metadata"] = Dict(
-            "solution_type" => string(typeof(sol)),
+        solution_data["metadata"] = Dict( 
             "num_timepoints" => length(sol.t),
             "num_states" => length(sol.u[1]),
             "time_range" => [sol.t[1], sol.t[end]],
@@ -418,6 +433,83 @@ function save_solution_json(sol, filename::String="solution.json"; include_metad
     end
 
     return JSON.json(solution_data)
+end
+
+"""
+    set_component_parameter(component_map::Dict, component_name::String, parameter_name::Symbol, new_value::Real)
+
+Set a parameter value for a specific component in the component map.
+
+# Arguments
+- `component_map`: Dictionary mapping node IDs to components
+- `component_name`: Name of the component (e.g., "I_1", "C_2")
+- `parameter_name`: Symbol name of the parameter (e.g., :L, :C)
+- `new_value`: New value to set for the parameter
+
+# Returns
+- `true` if parameter was found and set, `false` otherwise
+
+# Example
+```julia
+# Set the inductance L of component I_1 to 5.0
+set_component_parameter(component_map, "I_1", :L, 5.0)
+
+# Set the capacitance C of component C_2 to 0.1
+set_component_parameter(component_map, "C_2", :C, 0.1)
+```
+"""
+function set_component_parameter(component_map::Dict, component_name::String, parameter_name::Symbol, new_value::Real)
+    # Find the component by name
+    for (node_id, component) in component_map
+        if component.name == component_name
+            # Check if the parameter exists
+            if haskey(component.variables[:parameters], parameter_name)
+                # Set the new value
+                component.variables[:parameters][parameter_name] = new_value
+                println("Set $parameter_name = $new_value for component $component_name")
+                return true
+            else
+                println("Parameter $parameter_name not found in component $component_name")
+                println("Available parameters: ", keys(component.variables[:parameters]))
+                return false
+            end
+        end
+    end
+    
+    println("Component $component_name not found")
+    println("Available components: ", [comp.name for comp in values(component_map)])
+    return false
+end
+
+"""
+    get_component_parameter(component_map::Dict, component_name::String, parameter_name::Symbol)
+
+Get a parameter value for a specific component in the component map.
+
+# Arguments
+- `component_map`: Dictionary mapping node IDs to components
+- `component_name`: Name of the component (e.g., "I_1", "C_2")
+- `parameter_name`: Symbol name of the parameter (e.g., :L, :C)
+
+# Returns
+- Parameter value if found, `nothing` otherwise
+"""
+function get_component_parameter(component_map::Dict, component_name::String, parameter_name::Symbol)
+    # Find the component by name
+    for (node_id, component) in component_map
+        if component.name == component_name
+            # Check if the parameter exists
+            if haskey(component.variables[:parameters], parameter_name)
+                return component.variables[:parameters][parameter_name]
+            else
+                println("Parameter $parameter_name not found in component $component_name")
+                return nothing
+            end
+        end
+    end
+    
+    println("Component $component_name not found")
+    return nothing
 end
 
 end # module
