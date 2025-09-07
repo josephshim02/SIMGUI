@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      drawflow:
+        specifier: ^0.0.60
+        version: 0.0.60
+      plotly.js-dist-min:
+        specifier: ^3.1.0
+        version: 3.1.0
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -569,6 +575,9 @@ packages:
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
 
+  drawflow@0.0.60:
+    resolution: {integrity: sha512-UGj1+1DnWCVY6vJXBb6Ayt7KpPINBGqncVqpYDumVeBdIKxlBGn0tksp2yciVzQjkYsjFwMMDEdoVyWzUa2wkA==}
+
   electron-to-chromium@1.5.214:
     resolution: {integrity: sha512-TpvUNdha+X3ybfU78NoQatKvQEm1oq3lf2QbnmCEdw+Bd9RuIAY+hJTvq1avzHM0f7EJfnH3vbCnbzKzisc/9Q==}
 
@@ -809,6 +818,9 @@ packages:
   picomatch@4.0.3:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
+
+  plotly.js-dist-min@3.1.0:
+    resolution: {integrity: sha512-aihvA/+SnwEQxSufaPn8AWDUzdHFAbsCk2+w/IJResDafK3E2tvCvzW+ZV6JlMciJc7hQ3kCILS5Ao22OZ6kWA==}
 
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
@@ -1386,6 +1398,8 @@ snapshots:
 
   deep-is@0.1.4: {}
 
+  drawflow@0.0.60: {}
+
   electron-to-chromium@1.5.214: {}
 
   esbuild@0.25.9:
@@ -1629,6 +1643,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.3: {}
+
+  plotly.js-dist-min@3.1.0: {}
 
   postcss@8.5.6:
     dependencies:
