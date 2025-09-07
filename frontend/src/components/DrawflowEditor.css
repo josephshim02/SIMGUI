@@ -1,0 +1,584 @@
+:root {
+    --border-color: #cacaca;
+    --background-color: #ffffff;
+    --background-box-title: #f7f7f7;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  width: 80vw;   /* 60% of viewport width */
+  height: 60vh;  /* 60% of viewport height */
+  max-width: 900px;  /* optional cap */
+  max-height: 700px; /* optional cap */
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+
+.drawflow-app {
+    margin: 0px;
+    padding: 0px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: "Roboto", sans-serif;
+}
+
+.drawflow-app header {
+    height: 66px;
+    border-bottom: 1px solid var(--border-color);
+    padding-left: 20px;
+    position: relative;
+}
+
+.drawflow-app header h2 {
+    margin: 0px;
+    line-height: 66px;
+}
+
+.drawflow-app header a {
+    color: black;
+}
+
+.them-edit-link {
+    position: absolute;
+    top: 10px;
+    right: 100px;
+    color: black;
+    font-size: 40px;
+}
+
+.them-edit-link a {
+    text-decoration: none;
+}
+
+.github-link {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: black;
+}
+
+.wrapper {
+    width: 100%;
+    height: calc(100vh - 67px);
+    display: flex;
+}
+
+.col {
+    overflow: auto;
+    width: 300px;
+    height: 100%;
+    border-right: 1px solid var(--border-color);
+}
+
+.drag-drawflow {
+    line-height: 50px;
+    border-bottom: 1px solid var(--border-color);
+    padding-left: 20px;
+    cursor: move;
+    user-select: none;
+}
+
+.drag-drawflow:hover {
+    background-color: #f0f0f0;
+}
+
+.node-symbol {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #4ea9ff;
+    color: white;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.menu {
+    position: absolute;
+    height: 60px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1px;
+    display: block;
+    background: white;
+    width: 100%;
+    z-index: 1;
+}
+
+.menu ul {
+    padding: 0px;
+    margin: 0px;
+    line-height: 60px;
+}
+
+.menu ul li {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px !important;
+    border-right: 1px solid var(--border-color);
+    padding-right: 10px;
+    height: 60px;
+    box-sizing: border-box;
+    line-height: 60px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+}
+
+.menu ul li:hover {
+    background-color: #ededed;
+}
+
+/* toolbar buttons moved to left side (previously positioned on the right) */
+.btn-export {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-weight: bold;
+    border: 1px solid #0e5ba3;
+    background: #4ea9ff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.btn-clear {
+    position: absolute;
+    top: 10px;
+    left: 100px; /* spacing from export */
+    color: white;
+    font-weight: bold;
+    border: 1px solid #96015b;
+    background: #e3195a;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.btn-lock {
+    position: absolute;
+    bottom: 10px;
+    left: 170px; /* place lock to the right of the zoom bar */
+    display: flex;
+    font-size: 24px;
+    color: white;
+    padding: 5px 10px;
+    background: #555555;
+    border-radius: 4px;
+    border-right: 1px solid var(--border-color);
+    z-index: 5;
+    cursor: pointer;
+}
+
+.bar-zoom {
+    position: absolute;
+    bottom: 10px;
+    left: 10px; /* bottom-left corner */
+    display: flex;
+    font-size: 24px;
+    color: white;
+    padding: 5px 10px;
+    background: #555555;
+    border-radius: 4px;
+    border-right: 1px solid var(--border-color);
+    z-index: 5;
+}
+
+.bar-zoom i {
+    cursor: pointer;
+    padding-left: 10px;
+}
+
+.bar-zoom i:nth-child(1) {
+    padding-left: 0px;
+}
+
+#drawflow {
+    position: relative;
+    width: calc(100vw - 301px);
+    height: calc(100% - 50px);
+    top: 40px;
+    background: var(--background-color);
+    background-size: 25px 25px;
+    background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px),
+        linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
+}
+
+@media only screen and (max-width: 768px) {
+    .col {
+        width: 50px;
+    }
+    .col .drag-drawflow span {
+        display: none;
+    }
+    #drawflow {
+        width: calc(100vw - 51px);
+    }
+}
+
+/* Editing Drawflow */
+
+.drawflow .drawflow-node {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    -webkit-box-shadow: 0 2px 15px 2px var(--border-color);
+    box-shadow: 0 2px 15px 2px var(--border-color);
+    padding: 0px;
+    width: 200px;
+}
+
+.drawflow .drawflow-node .box {
+  padding: 8px;
+  margin: 4px 0;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.drawflow .drawflow-node .box p {
+  margin: 0 0 4px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.drawflow .drawflow-node .box input[type="number"] {
+  width: 80px;
+  padding: 4px 6px;
+  margin: 0;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  font-size: 12px;
+  background: white;
+  color: #495057;
+  outline: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.drawflow .drawflow-node .box input[type="number"]:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.drawflow .drawflow-node .box input[type="number"]:invalid {
+  border-color: #dc3545;
+}
+
+/* Make nodes slightly larger to accommodate inputs */
+.drawflow .drawflow-node[data-node="f_store"],
+.drawflow .drawflow-node[data-node="e_store"],
+.drawflow .drawflow-node[data-node="re"] {
+  min-width: 120px;
+}
+
+.drawflow .drawflow-node.selected {
+    background: white;
+    border: 1px solid #4ea9ff;
+    -webkit-box-shadow: 0 2px 20px 2px #4ea9ff;
+    box-shadow: 0 2px 20px 2px #4ea9ff;
+}
+
+.drawflow .drawflow-node.selected .title-box {
+    color: #22598c;
+}
+
+.drawflow .connection .main-path {
+    stroke: #4ea9ff;
+    stroke-width: 3px;
+}
+
+.drawflow .drawflow-node .input,
+.drawflow .drawflow-node .output {
+    height: 15px;
+    width: 15px;
+    border: 2px solid var(--border-color);
+}
+
+.drawflow .drawflow-node .input:hover,
+.drawflow .drawflow-node .output:hover {
+    background: #4ea9ff;
+}
+
+.drawflow .drawflow-node .output {
+    right: 10px;
+}
+
+.drawflow .drawflow-node .input {
+    left: -10px;
+    background: white;
+}
+
+.drawflow > .drawflow-delete {
+    border: 2px solid #43b993;
+    background: white;
+    color: #43b993;
+    -webkit-box-shadow: 0 2px 20px 2px #43b993;
+    box-shadow: 0 2px 20px 2px #43b993;
+}
+
+.drawflow-delete {
+    border: 2px solid #4ea9ff;
+    background: white;
+    color: #4ea9ff;
+    -webkit-box-shadow: 0 2px 20px 2px #4ea9ff;
+    box-shadow: 0 2px 20px 2px #4ea9ff;
+}
+
+.drawflow-node .title-box {
+    height: 50px;
+    line-height: 50px;
+    background: var(--background-box-title);
+    border-bottom: 1px solid #e9e9e9;
+    border-radius: 4px 4px 0px 0px;
+    padding-left: 10px;
+}
+
+.drawflow .title-box svg {
+    position: initial;
+}
+
+.drawflow-node .box {
+    padding: 10px 20px 20px 20px;
+    font-size: 14px;
+    color: #555555;
+}
+
+.drawflow-node .box p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.drawflow-node.welcome {
+    width: 250px;
+}
+
+.drawflow-node.slack .title-box {
+    border-radius: 4px;
+}
+
+.drawflow-node input,
+.drawflow-node select,
+.drawflow-node textarea {
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    width: 158px;
+    color: #555555;
+}
+
+.drawflow-node textarea {
+    height: 100px;
+}
+
+.drawflow-node.personalized {
+    background: red;
+    height: 200px;
+    text-align: center;
+    color: white;
+}
+
+.drawflow-node.personalized .input {
+    background: yellow;
+}
+
+.drawflow-node.personalized .output {
+    background: green;
+}
+
+.drawflow-node.personalized.selected {
+    background: blue;
+}
+
+/* New node type styles */
+.drawflow-node.f_store .node-symbol {
+    background-color: #4caf50;
+}
+
+.drawflow-node.e_store .node-symbol {
+    background-color: #ff9800;
+}
+
+.drawflow-node.re .node-symbol {
+    background-color: #f44336;
+}
+
+.drawflow-node.se .node-symbol {
+    background-color: #9c27b0;
+}
+
+.drawflow-node.sf .node-symbol {
+    background-color: #2196f3;
+}
+
+.drawflow-node.f_junc .node-symbol {
+    background-color: #607d8b;
+}
+
+.drawflow-node.e_junc .node-symbol {
+    background-color: #795548;
+}
+
+.drawflow .connection .point {
+    stroke: var(--border-color);
+    stroke-width: 2;
+    fill: white;
+}
+
+.drawflow .connection .point.selected,
+.drawflow .connection .point:hover {
+    fill: #4ea9ff;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 7;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 400px;
+}
+
+.modal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Dynamic Input Node Styles */
+.button-group {
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+    justify-content: center;
+}
+
+.btn-add,
+.btn-remove {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-add {
+    background-color: #4caf50;
+    color: white;
+}
+
+.btn-add:hover {
+    background-color: #45a049;
+    transform: scale(1.1);
+}
+
+.btn-remove {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-remove:hover {
+    background-color: #da190b;
+    transform: scale(1.1);
+}
+
+.btn-remove:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.input-count {
+    margin: 10px 0;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+.count {
+    font-weight: bold;
+    color: #333;
+}
+
+.col-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: calc(100vw - 301px);
+    transition: width 220ms ease;
+    min-width: 320px;
+}
+
+.col-right.with-result {
+    width: calc(100vw - 301px - 500px);
+}
+
+.col-right #drawflow {
+    width: 100%;
+    height: calc(100% - 50px);
+    transition: width 220ms ease, height 220ms ease;
+}
+
+@media only screen and (max-width: 900px) {
+    .col {
+        width: 60px;
+    }
+    .col-right {
+        width: calc(100vw - 61px);
+    }
+    .col-right.with-result {
+        width: calc(100vw - 61px - 500px);
+    }
+    .col-right #drawflow {
+        height: calc(100% - 50px);
+    }
+}
