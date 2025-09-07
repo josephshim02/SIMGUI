@@ -230,9 +230,9 @@ const domainOptions = [
   },
   { 
     name: "Chemical",                    
-    e_store: "Species Concentration",  
+    e_store: "Molar Concentration",  
     re: "Reaction Resistance",
-    se: "Chemical Potential Source", 
+    se: "Chemical Potential", 
     sf: "Reaction Rate Source" 
   },
 ];
