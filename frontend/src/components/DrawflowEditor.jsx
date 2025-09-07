@@ -197,7 +197,7 @@ const DrawflowEditor = () => {
 
 const domainOptions = [
   { 
-    name: "Mechanical (Translational)", 
+    name: "Mechanical (Force)", 
     f_store: "Mass",                 
     e_store: "Spring",                 
     re: "Damper",
@@ -205,7 +205,7 @@ const domainOptions = [
     sf: "Velocity" 
   },
   { 
-    name: "Mechanical (Rotational)",    
+    name: "Mechanical (Torque)",    
     f_store: "Moment of Inertia",    
     e_store: "Torsional Spring",       
     re: "Rotational Damper",
@@ -213,7 +213,7 @@ const domainOptions = [
     sf: "Angular Velocity" 
   },
   { 
-    name: "Electrical",                  
+    name: "Electrical (Voltage)",                  
     f_store: "Inductor",             
     e_store: "Capacitor",              
     re: "Resistor",
@@ -221,7 +221,7 @@ const domainOptions = [
     sf: "Current Source" 
   },
   { 
-    name: "Fluid",                       
+    name: "Fluid (Pressure/Force)",                       
     f_store: "Fluid Inertia",        
     e_store: "Compliance",             
     re: "Fluid Resistance",
@@ -229,7 +229,7 @@ const domainOptions = [
     sf: "Flow Source" 
   },
   { 
-    name: "Chemical",                    
+    name: "Chemical (Chemical Potential)",                    
     e_store: "Molar Concentration",  
     re: "Reaction Resistance",
     se: "Chemical Potential", 
@@ -346,20 +346,6 @@ const domainOptions = [
     <div className="drawflow-app">
       <header>
         <h2>Drawflow</h2>
-
-        <select
-        value={currDomain?.name ?? ""}
-        onChange={(e) => {
-          const d = domainOptions.find(x => x.name === e.target.value);
-          setCurrDomain(d ?? null);
-        }}
-        style={{ marginLeft: 12 }}
-        >
-          <option value="">-- General (Select a Domain) --</option>
-          {domainOptions.map(d => (
-            <option key={d.name} value={d.name}>{d.name}</option>
-          ))}
-        </select>
       </header>
       
       <div className="wrapper">
@@ -382,6 +368,21 @@ const domainOptions = [
             <ul>
               <li onClick={handleExport}>Export</li>
               <li onClick={drawflowAPI.clear}>Clear</li>
+              <li>
+                Domain:
+                  <select
+                    value={currDomain?.name ?? ""}
+                    onChange={(e) => {
+                      const d = domainOptions.find(x => x.name === e.target.value);
+                      setCurrDomain(d ?? null);
+                    }}
+                    >
+                      <option value="">-- General (Select a Domain) --</option>
+                      {domainOptions.map(d => (
+                        <option key={d.name} value={d.name}>{d.name}</option>
+                      ))}
+                  </select>
+              </li>
             </ul>
           </div>
           
