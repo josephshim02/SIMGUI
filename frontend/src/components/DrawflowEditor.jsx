@@ -5,12 +5,64 @@ import './DrawflowEditor.css';
 import { checkRules } from './rules';
 import ResultSection from './ResultSection';
 
+
+// meta about node: io = [inputs, outputs]；body = 'param' | 'source' | 'none'
+const makeMeta = (symbol, io, className, body) =>
+  ({ symbol, inputs: io[0], outputs: io[1], className, body });
+
+// preset 7 type of nodes, make those as objects where omit the fields
+const NODE_META = {
+  // Parameter-type: 1 in, 1 out, with parameter
+  f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
+  e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
+  re:      makeMeta('R',  [1,1], 're',      'param'),
+
+  // Source-type: only 1 out, with source
+  se:      makeMeta('Se', [0,1], 'se',      'source'),
+  sf:      makeMeta('Sf', [0,1], 'sf',      'source'),
+
+  // Junction-type: 1 in 1 out, no inner form
+  f_junc:  makeMeta('1',  [1,1], 'f_junc',  'none'),
+  e_junc:  makeMeta('0',  [1,1], 'e_junc',  'none'),
+};
+
+
+//counts number of nodes so we can give the input/select parameter fields of each node
+// a unique id corresponding to the node id
+let nodeCounter = 1;
+
+function cleanDrawflowData(drawflowData) {
+  const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+  let usefulData = drawFlowDict.drawflow.Home.data;
+  for (const node_id in usefulData) {
+    delete usefulData[node_id].html;
+    const meta = NODE_META[usefulData[node_id].name];
+    let param_dict = {};
+    if (meta.body === 'param') {
+      const element = document.getElementById(`param-${node_id}`);
+      param_dict['parameters'] = element.value;
+    } else if (meta.body === 'source') {
+      const element = document.getElementById(`source-${node_id}`);
+      param_dict['source'] = element.value;
+    }
+    usefulData[node_id].params = param_dict;
+    console.log('param_dict:', param_dict);
+    // const param = meta.body === 'param'  ? document.getElementById(`param-${node_id}`)
+    //               : meta.body === 'source' ? document.getElementById(`source-${node_id}`);
+
+    // console.log('param:', param.value);
+  }
+  drawFlowDict.drawflow.Home.data = usefulData;
+  return drawFlowDict;
+}
+
 const DrawflowEditor = () => {
   const drawflowRef = useRef(null);
   const editorRef = useRef(null);
   const [currentModule, setCurrentModule] = useState('Home');
   const [isLocked, setIsLocked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [currDomain, setCurrDomain] = useState(null);
 
   useEffect(() => {
     if (drawflowRef.current && !editorRef.current) {
@@ -46,6 +98,231 @@ const DrawflowEditor = () => {
     };
   }, []);
 
+    const api = {
+      exportJSON: () => editorRef.current?.export(),
+      clear: () => editorRef.current?.clearModuleSelected(),
+      changeModule:  (m) => editorRef.current?.changeModule(m),
+      setLocked:  (b) => { if (editorRef.current) editorRef.current.editor_mode = b ? 'fixed' : 'edit'; },
+      zoomIn:     () => editorRef.current?.zoom_in(),
+      zoomOut:    () => editorRef.current?.zoom_out(),
+      zoomReset:  () => editorRef.current?.zoom_reset(),
+      addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
+    }
+
+  const handleDragStart = (e, nodeType) => {
+    e.dataTransfer.setData("node", nodeType);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const nodeType = e.dataTransfer.getData("node");
+    const rect = drawflowRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    addNodeToDrawFlow(nodeType, x, y);
+  };
+
+  const sendToBackend = async () => {
+    if (!editorRef.current) {
+      console.error("Editor not initialized");
+      return;
+    }
+
+    const drawflowData = editorRef.current.export();
+    
+    try {
+      // Show loading state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Processing...';
+        exportButton.disabled = true;
+      }
+
+      var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+      console.log('Original Data:', drawFlowDict);
+      const cleanedData = cleanDrawflowData(drawFlowDict);
+      console.log('Cleaned Data:', cleanedData);
+
+      //Send to Genie backend
+      const response = await fetch('http://localhost:8000/echo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanedData)
+      });
+
+      console.log(response);
+      const result = await response.json();
+    
+      console.log('Result:', result);
+      
+      // Display the simulation results
+      displaySimulationResults(result);
+      
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+      //alert('Error connecting to backend: ' + error.message);
+    } finally {
+      // Reset button state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Export & Simulate';
+        exportButton.disabled = false;
+      }
+    }
+  };
+
+  const handleExport = () => {
+    if (editorRef.current) {
+      const data = editorRef.current.export();
+      
+
+      sendToBackend(data);
+
+    }
+  };
+
+
+  
+  const addNodeToDrawFlow = (name, pos_x, pos_y) => {
+    if (!editorRef.current || editorRef.current.editor_mode === "fixed") {
+      return false;
+    }
+
+    const editor = editorRef.current;
+    
+    // Calculate position relative to canvas
+    pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) -
+            editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom));
+    pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
+            editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom));
+
+    
+    // format of origin addNode: editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
+
+
+
+
+    // wrap of nodes, where each symbol has letter in a circle, have title and inner HTML
+    const wrap = (symbol, title, inner = '') => `
+      <div>
+        <div class="title-box">
+          <span class="node-symbol">${symbol}</span> ${title}
+        </div>
+        ${inner ? `<div class="box">${inner}</div>` : ''}
+      </div>
+    `;
+
+    const ParamField = 
+    `<p>Param:</p>
+    <input type="number"
+      id="param-${nodeCounter}"  // give unique id to each param input field
+      step="any" df-param placeholder="0.0"
+      style="width:80px;padding:2px;margin:2px;border:1px solid #ccc;border-radius:3px;"
+      onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.value)">
+    `;
+
+
+    const SourceField =
+    `<p>Input Type:</p>
+    <select df-input-type
+      id="source-${nodeCounter++}"  // give unique id to each select field
+      style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
+      onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
+        <option param="unit-step">Unit Step Input</option>
+        <option param="sinusoidal">Sinusoidal Input</option>
+        <option param="square-wave">Square Wave Input</option>
+        <option param="impulse">Impulse Input</option>
+    </select>
+    `;
+
+    // render inner HTML using meta data
+    const renderNodeHTML = (name, meta, getLabel) => {
+      const inner = meta.body === 'param'  ? ParamField
+                  : meta.body === 'source' ? SourceField
+                  : '';
+      return wrap(meta.symbol, getLabel(name), inner);
+    };
+
+    const m = NODE_META[name];
+    if (m) {
+      const html = renderNodeHTML(name, m, getLabel);
+      editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
+      return;
+    } else {
+      console.warn('Unknown node type:', name);
+      return;
+    }
+  };
+
+const domainOptions = [
+  { 
+    name: "Mechanical (Translational)", 
+    f_store: "Mass",                 
+    e_store: "Spring",                 
+    re: "Damper",
+    se: "Force",               
+    sf: "Velocity" 
+  },
+  { 
+    name: "Mechanical (Rotational)",    
+    f_store: "Moment of Inertia",    
+    e_store: "Torsional Spring",       
+    re: "Rotational Damper",
+    se: "Torque",              
+    sf: "Angular Velocity" 
+  },
+  { 
+    name: "Electrical",                  
+    f_store: "Inductor",             
+    e_store: "Capacitor",              
+    re: "Resistor",
+    se: "Voltage Source",      
+    sf: "Current Source" 
+  },
+  { 
+    name: "Fluid",                       
+    f_store: "Fluid Inertia",        
+    e_store: "Compliance",             
+    re: "Fluid Resistance",
+    se: "Pressure Source",     
+    sf: "Flow Source" 
+  },
+  { 
+    name: "Chemical",                    
+    e_store: "Species Concentration",  
+    re: "Reaction Resistance",
+    se: "Chemical Potential Source", 
+    sf: "Reaction Rate Source" 
+  },
+];
+
+  const baseNodeTypes = [
+    { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
+    { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
+    { type: "re", symbol: "R", defaultLabel: "Resistance" },
+    { type: "se", symbol: "Se", defaultLabel: "SE" },
+    { type: "sf", symbol: "Sf", defaultLabel: "SF" },
+    { type: "f_junc", symbol: "1", defaultLabel: "1" },
+    { type: "e_junc", symbol: "0", defaultLabel: "0" },
+  ];
+
+  const getLabel = (type) => {
+    if (!currDomain) {
+      return baseNodeTypes.find(n => n.type === type)?.defaultLabel ?? type;
+    }
+    
+    return currDomain[type]
+      ?? baseNodeTypes.find(n => n.type === type)?.defaultLabel
+      ?? type;
+  };
+
+  // event listeners for debug usage
   const setupEventListeners = (editor) => {
     editor.on("nodeCreated", (id) => {
       console.log("Node created " + id);
@@ -66,7 +343,8 @@ const DrawflowEditor = () => {
     editor.on("moduleChanged", (name) => {
       console.log("Module Changed " + name);
     });
-    editor.on('connectionCreated', function(connection) {
+
+    editor.on('connectionCreated', (connection) => {
 
       // Get the nodes involved in the connection
       const outputNode = editor.getNodeFromId(connection.output_id);
@@ -103,334 +381,55 @@ const DrawflowEditor = () => {
       console.log(connection);
     });
 
-    // editor.on("mouseMove", (position) => {
-    //   console.log("Position mouse x:" + position.x + " y:" + position.y);
-    // });
+    editor.on("mouseMove", (position) => {
+      //console.log("Position mouse x:" + position.x + " y:" + position.y);
+    });
 
-    // editor.on("nodeMoved", (id) => {
-    //   console.log("Node moved " + id);
-    // });
+    editor.on("nodeMoved", (id) => {
+      console.log("Node moved " + id);
+    });
 
-    // editor.on("zoom", (zoom) => {
-    //   console.log("Zoom level " + zoom);
-    // });
+    editor.on("zoom", (zoom) => {
+      console.log("Zoom level " + zoom);
+    });
 
-    // editor.on("translate", (position) => {
-    //   console.log("Translate x:" + position.x + " y:" + position.y);
-    // });
+    editor.on("translate", (position) => {
+      console.log("Translate x:" + position.x + " y:" + position.y);
+    });
 
-    // editor.on("addReroute", (id) => {
-    //   console.log("Reroute added " + id);
-    // });
+    editor.on("addReroute", (id) => {
+      console.log("Reroute added " + id);
+    });
 
-    // editor.on("removeReroute", (id) => {
-    //   console.log("Reroute removed " + id);
-    // });
+    editor.on("removeReroute", (id) => {
+      console.log("Reroute removed " + id);
+    });
   };
 
-  const handleDragStart = (e, nodeType) => {
-    e.dataTransfer.setData("node", nodeType);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const nodeType = e.dataTransfer.getData("node");
-    const rect = drawflowRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    addNodeToDrawFlow(nodeType, x, y);
-  };
-
-  const addNodeToDrawFlow = (name, pos_x, pos_y) => {
-    if (!editorRef.current || editorRef.current.editor_mode === "fixed") {
-      return false;
-    }
-
-    const editor = editorRef.current;
-    
-    // Calculate position relative to canvas
-    pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) -
-            editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom));
-    pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
-            editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom));
-
-    switch (name) {
-      case "f_store": {
-        const fStore = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">I</span> Inertia 
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("f_store", 1, 1, pos_x, pos_y, "f_store", {}, fStore);
-        break;
-      }
-
-      case "e_store": {
-        const eStore = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">C</span> Capacitance
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("e_store", 1, 1, pos_x, pos_y, "e_store", {}, eStore);
-        break;
-      }
-
-      case "re": {
-        const re = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">R</span> Resistance
-            </div>
-            <div class="box">
-            <p>Param:</p>
-            <input type="number" 
-                   step="any" 
-                   df-param 
-                   placeholder="0.0"
-                   style="width: 80px; padding: 2px; margin: 2px; border: 1px solid #ccc; border-radius: 3px;"
-                   onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-            </div>
-          </div>
-        `;
-        editor.addNode("re", 1, 1, pos_x, pos_y, "re", {}, re);
-        break;
-      }
-
-      case "se": {
-        const se = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">Se</span> SE
-            </div>
-            <div class="box">
-            <p>Input Type:</p>
-            <select df-input-type 
-                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
-                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-              <option param="unit-step">Unit Step Input</option>
-              <option param="sinusoidal">Sinusoidal Input</option>
-              <option param="square-wave">Square Wave Input</option>
-              <option param="impulse">Impulse Input</option>
-            </select>
-          </div>
-          </div>
-        `;
-        editor.addNode("se", 0, 1, pos_x, pos_y, "se", {}, se);
-        break;
-      }
-
-      case "sf": {
-        const sf = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">Sf</span> SF
-            </div>
-            <div class="box">
-            <p>Input Type:</p>
-            <select df-input-type 
-                    style="width: 150px; padding: 4px; margin: 2px; border: 1px solid #ced4da; border-radius: 3px; font-size: 12px; background: white;"
-                    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.param)">
-              <option param="unit-step">Unit Step Input</option>
-              <option param="sinusoidal">Sinusoidal Input</option>
-              <option param="square-wave">Square Wave Input</option>
-              <option param="impulse">Impulse Input</option>
-            </select>
-          </div>
-          </div>
-        `;
-        editor.addNode("sf", 0, 1, pos_x, pos_y, "sf", {}, sf);
-        break;
-      }
-
-      case "f_junc": {
-        const fJunc = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">1</span>1
-            </div>
-          </div>
-        `;
-        editor.addNode("f_junc", 1, 1, pos_x, pos_y, "f_junc", {}, fJunc);
-        break;
-      }
-
-      case "e_junc": {
-        const eJunc = `
-          <div>
-            <div class="title-box">
-              <span class="node-symbol">0</span>0 
-            </div>
-          </div>
-        `;
-        editor.addNode("e_junc", 1, 1, pos_x, pos_y, "e_junc", {}, eJunc);
-        break;
-      }
-
-      default:
-        break;
-    }
-  };
-
-  const handleExport = () => {
-    if (editorRef.current) {
-      const data = editorRef.current.export();
-      console.log('Export data:', data);
-      sendToBackend(data);
-    }
-  };
-  function cleanDrawflowData(drawflowData) {
-    const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
-    const usefulData = drawFlowDict.drawflow.Home.data;
-    for (const key in usefulData) {
-      delete usefulData[key].html;
-    }
-    drawFlowDict.drawflow.Home.data = usefulData;
-    return drawFlowDict;
-  }
-  const sendToBackend = async (drawflowData) => {
-    try {
-      // Show loading state
-      const exportButton = document.querySelector('.export-btn');
-      if (exportButton) {
-        exportButton.textContent = 'Processing...';
-        exportButton.disabled = true;
-      }
-
-      var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
-      const cleanedData = cleanDrawflowData(drawFlowDict);
-      console.log('Cleaned Data:', cleanedData);
-      console.log(JSON.stringify(cleanedData));
-      // Create a Blob from the string
-      // const cleanedDataStr = JSON.stringify(cleanedData, null, 2); // Convert to pretty JSON string
-
-      // const blob = new Blob([cleanedDataStr], { type: 'text/plain' });
-
-      // // Create a temporary link and trigger the download
-      // const link = document.createElement('a');
-      // link.href = URL.createObjectURL(blob);
-      // link.download = 'cleanedData.txt';
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-
-      //Send to Genie backend
-      const response = await fetch('http://localhost:8000/echo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cleanedData)
-      });
-
-      console.log(response);
-      const result = await response.json();
-
-      console.log('Result:', result);
-
-      // Display the simulation results
-      // displaySimulationResults(result);
-
-    } catch (error) {
-      console.error('Error sending data to backend:', error);
-      alert('Error connecting to backend: ' + error.message);
-    } finally {
-      // Reset button state
-      const exportButton = document.querySelector('.export-btn');
-      if (exportButton) {
-        exportButton.textContent = 'Export & Simulate';
-        exportButton.disabled = false;
-      }
-    }
-  };
-
-
-  const handleClear = () => {
-    if (editorRef.current) {
-      editorRef.current.clearModuleSelected();
-    }
-  };
-
-  const handleModuleChange = (moduleName) => {
-    if (editorRef.current) {
-      editorRef.current.changeModule(moduleName);
-      setCurrentModule(moduleName);
-    }
-  };
-
-  const handleLockToggle = () => {
-    if (editorRef.current) {
-      if (isLocked) {
-        editorRef.current.editor_mode = 'edit';
-      } else {
-        editorRef.current.editor_mode = 'fixed';
-      }
-      setIsLocked(!isLocked);
-    }
-  };
-
-  const handleZoomIn = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_in();
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_out();
-    }
-  };
-
-  const handleZoomReset = () => {
-    if (editorRef.current) {
-      editorRef.current.zoom_reset();
-    }
-  };
-
-  const nodeTypes = [
-    { type: "f_store", symbol: "I", label: "Inertia" },
-    { type: "e_store", symbol: "C", label: "Capacitance" },
-    { type: "re", symbol: "R", label: "Resistance" },
-    { type: "se", symbol: "Se", label: "SE" },
-    { type: "sf", symbol: "Sf", label: "SF" },
-    { type: "f_junc", symbol: "1", label: "1" },
-    { type: "e_junc", symbol: "0", label: "0" },
-  ];
 
   return (
     <div className="drawflow-app">
       <header>
         <h2>Drawflow</h2>
+
+        <select
+        value={currDomain?.name ?? ""}
+        onChange={(e) => {
+          const d = domainOptions.find(x => x.name === e.target.value);
+          setCurrDomain(d ?? null);
+        }}
+        style={{ marginLeft: 12 }}
+        >
+          <option value="">-- Select Domain --</option>
+          {domainOptions.map(d => (
+            <option key={d.name} value={d.name}>{d.name}</option>
+          ))}
+        </select>
       </header>
       
       <div className="wrapper">
         <div className="col">
-          {nodeTypes.map((node) => (
+          {baseNodeTypes.map((node) => (
             <div
               key={node.type}
               className="drag-drawflow"
@@ -438,7 +437,7 @@ const DrawflowEditor = () => {
               onDragStart={(e) => handleDragStart(e, node.type)}
             >
               <span className="node-symbol">{node.symbol}</span>
-              <span> {node.label}</span>
+              <span> {getLabel(node.type)}</span>
             </div>
           ))}
         </div>
@@ -446,12 +445,8 @@ const DrawflowEditor = () => {
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li onClick={handleExport}>
-                Export
-              </li>
-              <li onClick={handleClear}>
-                Clear
-              </li>
+              <li onClick={sendToBackend}>Export</li>
+              <li onClick={api.clear}>Clear</li>
             </ul>
           </div>
           
@@ -461,13 +456,13 @@ const DrawflowEditor = () => {
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <div className="btn-lock" onClick={handleLockToggle}>
+            <div className="btn-lock" onClick={api.setLocked}>
               <i className={`fas ${isLocked ? 'fa-lock-open' : 'fa-lock'}`}></i>
             </div>
             <div className="bar-zoom">
-              <i className="fas fa-search-minus" onClick={handleZoomOut}></i>
-              <i className="fas fa-search" onClick={handleZoomReset}></i>
-              <i className="fas fa-search-plus" onClick={handleZoomIn}></i>
+              <i className="fas fa-search-minus" onClick={api.zoomOut}></i>
+              <i className="fas fa-search" onClick={api.zoomReset}></i>
+              <i className="fas fa-search-plus" onClick={api.zoomIn}></i>
             </div>
           </div>
         </div>
