@@ -19,6 +19,7 @@ println(data)
 # Convert JSON to BondGraph
 bg, data = convert_drawflow_to_bondgraph(data, verbose=true)
 
+time_of_simulation = data["drawflow"]["Simulation"]["time_of_simulation"]
 # remove test_bondgraph.png
 rm("test_bondgraph.png")
 rm("test_simulation.png")
@@ -28,7 +29,7 @@ rm("test_solution.json")
 plot_bondgraph(bg, filename="test_bondgraph.png", title="Test BondGraph")
 
 # Simulate the BondGraph
-sol, relations = simulate_bondgraph(bg, tspan=(0.0, 5.0), verbose=true)
+sol, relations = simulate_bondgraph(bg, tspan=(0.0, time_of_simulation), verbose=true)
 
 # Print solution details
 if sol !== nothing

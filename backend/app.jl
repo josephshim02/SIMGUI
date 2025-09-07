@@ -20,8 +20,10 @@ end
 
 # Echo endpoint for testing
 route("/echo", method = POST) do
-  bg, enhanced_data = convert_drawflow_to_bondgraph(JSON.parse(JSON.json(jsonpayload())), verbose=true)
-  sol, relations = simulate_bondgraph(bg, tspan=(0.0, 10.0), verbose=true)
+  json_data = JSON.parse(JSON.json(jsonpayload()))
+  bg, enhanced_data = convert_drawflow_to_bondgraph(json_data, verbose=true)
+  time_of_simulation = json_data["drawflow"]["Simulation"]["time_of_simulation"] 
+  sol, relations = simulate_bondgraph(bg, tspan=(0.0, time_of_simulation), verbose=true)
   solution_data = save_solution_json(sol, include_metadata=true)
   return solution_data
 end
