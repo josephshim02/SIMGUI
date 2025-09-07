@@ -64,6 +64,8 @@ const DrawflowEditor = () => {
   const [isLocked, setIsLocked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currDomain, setCurrDomain] = useState(null);
+  const [bannerMessage, setBannerMessage] = useState('');
+  const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     if (drawflowRef.current && !editorRef.current) {
@@ -98,6 +100,15 @@ const DrawflowEditor = () => {
       }
     };
   }, []);
+
+  const showErrorBanner = (message) => {
+    setBannerMessage(message);
+    setShowBanner(true);
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      setShowBanner(false);
+    }, 3000);
+  };
 
   const drawflowAPI = {
     exportJSON: () => editorRef.current?.export(),
@@ -403,8 +414,7 @@ const domainOptions = [
                 connection.input_class
             );
         
-        alert(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`);
-        // Show feedback to user
+        showErrorBanner(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`);
         console.log(`Connection blocked: ${outputNode.name} cannot connect to ${inputNode.name}`);
       }
     });
@@ -445,7 +455,17 @@ const domainOptions = [
       <header>
         <h2>Drawflow</h2>
       </header>
-      
+      {showBanner && (
+        <div className="error-banner">
+          <span>{bannerMessage}</span>
+          <button 
+            className="close-banner" 
+            onClick={() => setShowBanner(false)}
+          >
+            ×
+          </button>
+        </div>
+      )}
       <div className="wrapper">
         <div className="col">
           {baseNodeTypes.map((node) => (
