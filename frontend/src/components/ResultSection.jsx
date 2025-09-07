@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import image1 from "../assets/image1.png";
 import "./ResultSection.css";
 import Plotly from "plotly.js-dist-min";
 
 
 const ResultSection = ({isVisible, setIsVisible, data}) => {
     const plotRef = useRef(null);
+    const [isLoaded, setIsLoaded] = useState(false); // <-- Add this line
 
     const toggleVisibility = () => setIsVisible((v) => !v);
 
@@ -15,7 +15,8 @@ const ResultSection = ({isVisible, setIsVisible, data}) => {
         const node = plotRef.current;
         if (!node) return;
 
-        if(!data) return ;
+        if(!data) return setIsLoaded(false);
+        setIsLoaded(true);
 
         // create the plot once when the panel becomes visible
         // Use the JSON's traces/layout and enable Plotly's responsive handler
@@ -53,21 +54,24 @@ const ResultSection = ({isVisible, setIsVisible, data}) => {
                 {isVisible ? "Hide Result" : "Show Result"}
             </button>
 
+
             {isVisible && (
+                
                 <div className="result-section">
-                    <div className="image-section">
-                        <img
-                            src={image1}
-                            alt="Result"
-                            className="result-image"
-                        />
-                    </div>
+                    {
+                    !isLoaded && (
+                        
+                        <h1 className="loading-text">
+                            Haven't run simulation yet
+                        </h1>
+                    )
+                }
                     <div className="plot-section">
                         {/* plot fills the container; Plotly will be initialized on this element */}
                         <div
                             className="result-plot"
                             ref={plotRef}
-                            style={{ width: "100%", height: "100%", minHeight: 400 }}
+                            style={{ width: "100%", height: "100%", minHeight: 400, marginTop: 200 }}
                         />
                     </div>
                 </div>
