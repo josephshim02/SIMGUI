@@ -4,6 +4,7 @@ import 'drawflow/dist/drawflow.min.css';
 import './DrawflowEditor.css';
 import { checkRules } from './rules';
 import ResultSection from './ResultSection';
+import ConnectionRulesPopup from './ConnectionRulesPopup';
 
 
 // meta about node: io = [inputs, outputs]；body = 'param' | 'source' | 'none'
@@ -483,6 +484,7 @@ const domainOptions = [
 
   return (
     <div className="drawflow-app">
+      <ConnectionRulesPopup />
       <header>
         <h2>Drawflow</h2>
       </header>
