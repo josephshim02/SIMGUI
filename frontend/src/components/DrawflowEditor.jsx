@@ -16,6 +16,7 @@ const NODE_META = {
   f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
   e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
   re:      makeMeta('R',  [1,1], 're',      'param'),
+  rxn:      makeMeta('Re',  [1,1], 'rxn',      'param'),
 
   // Source-type: only 1 out, with source
   se:      makeMeta('Se', [0,1], 'se',      'source'),
@@ -337,6 +338,7 @@ const domainOptions = [
     { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
     { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
     { type: "re", symbol: "R", defaultLabel: "Resistance" },
+    { type: "rxn", symbol: "Re", defaultLabel: "Chemical Reaction" },
     { type: "se", symbol: "Se", defaultLabel: "SE" },
     { type: "sf", symbol: "Sf", defaultLabel: "SF" },
     { type: "f_junc", symbol: "1", defaultLabel: "1" },
@@ -499,6 +501,7 @@ const domainOptions = [
           </div>
         </div>
         <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} />
+
       </div>
     </div>
   );
