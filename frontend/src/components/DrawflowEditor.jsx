@@ -109,6 +109,13 @@ const DrawflowEditor = () => {
     zoomOut:    () => editorRef.current?.zoom_out(),
     zoomReset:  () => editorRef.current?.zoom_reset(),
     addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
+    currentModule: () => editorRef.current?.module,
+    setNodeTitle: (id, symbol, label) => {
+      const editor = editorRef.current;
+      if (!editor) return;
+      const titleEl = editor.precanvas.querySelector(`#node-${id} .title-box`);
+      if (titleEl) titleEl.innerHTML = `<span class="node-symbol">${symbol}</span> ${label}`;
+    },
   }
 
   const handleLockToggle = () => {
@@ -355,7 +362,31 @@ const domainOptions = [
       ?? type;
   };
 
-  // event listeners for debug usages
+  const labels = React.useMemo(() => {
+    return {
+      refreshAll() {
+        const exp = drawflowAPI.exportJSON?.();
+        const mod = drawflowAPI.currentModule?.();
+        if (!exp || !mod) return;
+        const data = exp.drawflow?.[mod]?.data || {};
+        for (const idStr in data) {
+          const nodeName = data[idStr]?.name;
+          const meta = NODE_META[nodeName];
+          if (!meta) continue;
+          drawflowAPI.setNodeTitle(Number(idStr), meta.symbol, getLabel(nodeName));
+        }
+      }
+    };
+  }, [drawflowAPI, currDomain]);
+
+  // lables refresh logic
+  useEffect(() => {
+    if (!editorRef.current) return;
+    labels.refreshAll();
+  }, [currDomain, labels]);
+
+
+  // event listeners
   const setupEventListeners = (editor) => {
     editor.on("nodeCreated", (id) => {
       console.log("Node created " + id);
