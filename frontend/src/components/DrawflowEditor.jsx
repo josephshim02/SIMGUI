@@ -85,7 +85,7 @@ const DrawflowEditor = () => {
         const element = document.getElementById(`initial-${node_id}`);
         console.log(element, node_id);
         if (!element?.value) {
-          alert(`Please fill in the Initial Value for node ID ${node_id}`);
+          notify(`Please fill in the Initial Value for node ID ${node_id}`, "error");
           return 0;
         }
       }
@@ -253,7 +253,7 @@ const DrawflowEditor = () => {
     } catch (error) {
       console.error('Error sending data to backend:', error);
       //alert('Error connecting to backend: ' + error.message);
-      notify('Error connecting to backend: + error.message', error)
+      notify(`Error connecting to backend: ${error.message}`, "error")
     } finally {
       // Reset button state
       const exportButton = document.querySelector('.export-btn');
@@ -436,8 +436,8 @@ const domainOptions = [
     { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
     { type: "re", symbol: "R", defaultLabel: "Resistance" },
     { type: "rxn", symbol: "Re", defaultLabel: "Chemical Reaction" },
-    { type: "se", symbol: "Se", defaultLabel: "SE" },
-    { type: "sf", symbol: "Sf", defaultLabel: "SF" },
+    { type: "se", symbol: "Se", defaultLabel: "Effort Source" },
+    { type: "sf", symbol: "Sf", defaultLabel: "Flow Source" },
     { type: "f_junc", symbol: "1", defaultLabel: "1" },
     { type: "e_junc", symbol: "0", defaultLabel: "0" },
   ];
@@ -610,7 +610,7 @@ const handleClearClick = () => {
           <div className="menu">
             <ul>
               <li onClick={checkNodeParams}>Export</li>  {/* open modal instead of handleExport */}
-              <li onClick={drawflowAPI.clear}>Clear</li>
+              <li onClick={handleClearClick}>Clear</li>
               <li>
                 Domain:
                 <select
@@ -657,17 +657,24 @@ const handleClearClick = () => {
         >
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <form onSubmit={(e) => {
-              e.preventDefault();
-              sendToBackend();
-            }}>
-              <h2>Choose simulation parameters</h2>
-              <label>
-                Duration:
-                <input id="duration" type="int" name="duration" defaultValue="5" required />
-              </label>
-
-              <button type="submit">Start Simulation</button>
-            </form>
+                e.preventDefault();
+                sendToBackend();
+              }}>
+                <h2>Choose simulation parameters</h2>
+                <label>
+                  Duration (seconds):
+                  <input 
+                    id="duration" 
+                    type="number"
+                    name="duration" 
+                    defaultValue="5" 
+                    min="1"           
+                    step="1"         
+                    required 
+                  />
+                </label>
+                <button type="submit">Start Simulation</button>
+              </form>
           </div>
         </div>
 
