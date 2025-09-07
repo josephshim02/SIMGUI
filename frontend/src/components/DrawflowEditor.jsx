@@ -65,8 +65,12 @@ const DrawflowEditor = () => {
   const [isLocked, setIsLocked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currDomain, setCurrDomain] = useState(null);
-  const [bannerMessage, setBannerMessage] = useState('');
-  const [showBanner, setShowBanner] = useState(false);
+  const hideTimerRef = useRef(null);
+  const [banner, setBanner] = useState({
+    visible: false,
+    message: '',
+    type: 'info',   // 'success' | 'error' | 'warning' | 'info'
+  });
 
   useEffect(() => {
     if (drawflowRef.current && !editorRef.current) {
@@ -102,13 +106,24 @@ const DrawflowEditor = () => {
     };
   }, []);
 
-  const showErrorBanner = (message) => {
-    setBannerMessage(message);
-    setShowBanner(true);
-    // Auto-hide after 3 seconds
-    setTimeout(() => {
-      setShowBanner(false);
-    }, 3000);
+  const notify = (message, type = 'info', duration = 3000) => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    setBanner({ visible: true, message, type });
+    hideTimerRef.current = setTimeout(() => {
+      setBanner(prev => ({ ...prev, visible: false }));
+      hideTimerRef.current = null;
+    }, duration);
+  };
+
+  const closeBanner = () => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    setBanner(prev => ({ ...prev, visible: false }));
   };
 
   const drawflowAPI = {
@@ -196,6 +211,7 @@ const DrawflowEditor = () => {
     } catch (error) {
       console.error('Error sending data to backend:', error);
       //alert('Error connecting to backend: ' + error.message);
+      notify('Error connecting to backend: + error.message', error)
     } finally {
       // Reset button state
       const exportButton = document.querySelector('.export-btn');
@@ -235,7 +251,7 @@ const DrawflowEditor = () => {
     // Clean up the URL object
     URL.revokeObjectURL(url);
     
-    alert('Drawflow data exported and downloaded as JSON file!');
+    notify('Exported JSON successfully.', 'success');
   };
 
 
@@ -348,6 +364,7 @@ const domainOptions = [
     name: "Chemical (Chemical Potential)",                    
     e_store: "Molar Concentration",  
     re: "Reaction Resistance",
+    rxn: "Chemical Reaction",
     se: "Chemical Potential", 
     sf: "Reaction Rate Source" 
   },
@@ -446,7 +463,7 @@ const domainOptions = [
                 connection.input_class
             );
         
-        showErrorBanner(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`);
+        notify(`Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`, 'error');
         console.log(`Connection blocked: ${outputNode.name} cannot connect to ${inputNode.name}`);
       }
     });
@@ -488,17 +505,16 @@ const domainOptions = [
       <header>
         <h2>Drawflow</h2>
       </header>
-      {showBanner && (
-        <div className="error-banner">
-          <span>{bannerMessage}</span>
-          <button 
-            className="close-banner" 
-            onClick={() => setShowBanner(false)}
-          >
-            ×
-          </button>
-        </div>
-      )}
+    {banner.visible && (
+      <div
+        className={`banner banner--${banner.type}`}
+        role={(banner.type === 'error' || banner.type === 'warning') ? 'alert' : 'status'}
+        aria-live="polite"
+      >
+        <span className="banner__text">{banner.message}</span>
+        <button className="banner__close" onClick={closeBanner} aria-label="Close notification">×</button>
+      </div>
+    )}
       <div className="wrapper">
         <div className="col">
           {baseNodeTypes.map((node) => (
