@@ -98,16 +98,25 @@ const DrawflowEditor = () => {
     };
   }, []);
 
-    const api = {
-      exportJSON: () => editorRef.current?.export(),
-      clear: () => editorRef.current?.clearModuleSelected(),
-      changeModule:  (m) => editorRef.current?.changeModule(m),
-      setLocked:  (b) => { if (editorRef.current) editorRef.current.editor_mode = b ? 'fixed' : 'edit'; },
-      zoomIn:     () => editorRef.current?.zoom_in(),
-      zoomOut:    () => editorRef.current?.zoom_out(),
-      zoomReset:  () => editorRef.current?.zoom_reset(),
-      addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
-    }
+  const drawflowAPI = {
+    exportJSON: () => editorRef.current?.export(),
+    clear: () => editorRef.current?.clearModuleSelected(),
+    changeModule:  (m) => editorRef.current?.changeModule(m),
+    setLockedMode: locked =>
+      editorRef.current && (editorRef.current.editor_mode = locked ? 'fixed' : 'edit'),
+    zoomIn:     () => editorRef.current?.zoom_in(),
+    zoomOut:    () => editorRef.current?.zoom_out(),
+    zoomReset:  () => editorRef.current?.zoom_reset(),
+    addNodeAt:  (t,x,y) => addNodeToDrawFlow(t,x,y),
+  }
+
+  const handleLockToggle = () => {
+    setIsLocked(prev => {
+    const next = !prev;
+    drawflowAPI.setLockedMode(next);
+    return next;
+    })
+  };
 
   const handleDragStart = (e, nodeType) => {
     e.dataTransfer.setData("node", nodeType);
@@ -123,7 +132,58 @@ const DrawflowEditor = () => {
     const rect = drawflowRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    addNodeToDrawFlow(nodeType, x, y);
+    drawflowAPI.addNodeAt(nodeType, x, y);
+  };
+
+  const sendToBackend = async () => {
+    if (!editorRef.current) {
+      console.error("Editor not initialized");
+      return;
+    }
+
+    const drawflowData = editorRef.current.export();
+    
+    try {
+      // Show loading state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Processing...';
+        exportButton.disabled = true;
+      }
+
+      var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+      console.log('Original Data:', drawFlowDict);
+      const cleanedData = cleanDrawflowData(drawFlowDict);
+      console.log('Cleaned Data:', cleanedData);
+
+      //Send to Genie backend
+      const response = await fetch('http://localhost:8000/echo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanedData)
+      });
+
+      console.log(response);
+      const result = await response.json();
+    
+      console.log('Result:', result);
+      
+      // Display the simulation results
+      displaySimulationResults(result);
+      
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+      //alert('Error connecting to backend: ' + error.message);
+    } finally {
+      // Reset button state
+      const exportButton = document.querySelector('.export-btn');
+      if (exportButton) {
+        exportButton.textContent = 'Export & Simulate';
+        exportButton.disabled = false;
+      }
+    }
   };
 
   const sendToBackend = async () => {
@@ -180,10 +240,27 @@ const DrawflowEditor = () => {
   const handleExport = () => {
     if (editorRef.current) {
       const data = editorRef.current.export();
+      console.log('Export data:', data);
       
-
-      sendToBackend(data);
-
+      // Create a blob with the JSON data
+      const jsonString = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      
+      // Create a download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `drawflow-export-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+      
+      // Trigger the download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
+      
+      alert('Drawflow data exported and downloaded as JSON file!');
     }
   };
 
@@ -262,7 +339,7 @@ const DrawflowEditor = () => {
 
 const domainOptions = [
   { 
-    name: "Mechanical (Translational)", 
+    name: "Mechanical (Force)", 
     f_store: "Mass",                 
     e_store: "Spring",                 
     re: "Damper",
@@ -270,7 +347,7 @@ const domainOptions = [
     sf: "Velocity" 
   },
   { 
-    name: "Mechanical (Rotational)",    
+    name: "Mechanical (Torque)",    
     f_store: "Moment of Inertia",    
     e_store: "Torsional Spring",       
     re: "Rotational Damper",
@@ -278,7 +355,7 @@ const domainOptions = [
     sf: "Angular Velocity" 
   },
   { 
-    name: "Electrical",                  
+    name: "Electrical (Voltage)",                  
     f_store: "Inductor",             
     e_store: "Capacitor",              
     re: "Resistor",
@@ -286,7 +363,7 @@ const domainOptions = [
     sf: "Current Source" 
   },
   { 
-    name: "Fluid",                       
+    name: "Fluid (Pressure/Force)",                       
     f_store: "Fluid Inertia",        
     e_store: "Compliance",             
     re: "Fluid Resistance",
@@ -294,10 +371,10 @@ const domainOptions = [
     sf: "Flow Source" 
   },
   { 
-    name: "Chemical",                    
-    e_store: "Species Concentration",  
+    name: "Chemical (Chemical Potential)",                    
+    e_store: "Molar Concentration",  
     re: "Reaction Resistance",
-    se: "Chemical Potential Source", 
+    se: "Chemical Potential", 
     sf: "Reaction Rate Source" 
   },
 ];
@@ -322,7 +399,7 @@ const domainOptions = [
       ?? type;
   };
 
-  // event listeners for debug usage
+  // event listeners for debug usages
   const setupEventListeners = (editor) => {
     editor.on("nodeCreated", (id) => {
       console.log("Node created " + id);
@@ -411,20 +488,6 @@ const domainOptions = [
     <div className="drawflow-app">
       <header>
         <h2>Drawflow</h2>
-
-        <select
-        value={currDomain?.name ?? ""}
-        onChange={(e) => {
-          const d = domainOptions.find(x => x.name === e.target.value);
-          setCurrDomain(d ?? null);
-        }}
-        style={{ marginLeft: 12 }}
-        >
-          <option value="">-- Select Domain --</option>
-          {domainOptions.map(d => (
-            <option key={d.name} value={d.name}>{d.name}</option>
-          ))}
-        </select>
       </header>
       
       <div className="wrapper">
@@ -445,7 +508,7 @@ const domainOptions = [
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li onClick={sendToBackend}>Export</li>
+              <li onClick={handleExport}>Export</li>
               <li onClick={api.clear}>Clear</li>
             </ul>
           </div>
@@ -456,13 +519,13 @@ const domainOptions = [
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <div className="btn-lock" onClick={api.setLocked}>
+            <div className="btn-lock" onClick={handleLockToggle}>
               <i className={`fas ${isLocked ? 'fa-lock-open' : 'fa-lock'}`}></i>
             </div>
             <div className="bar-zoom">
-              <i className="fas fa-search-minus" onClick={api.zoomOut}></i>
-              <i className="fas fa-search" onClick={api.zoomReset}></i>
-              <i className="fas fa-search-plus" onClick={api.zoomIn}></i>
+              <i className="fas fa-search-minus" onClick={drawflowAPI.zoomOut}></i>
+              <i className="fas fa-search" onClick={drawflowAPI.zoomReset}></i>
+              <i className="fas fa-search-plus" onClick={drawflowAPI.zoomIn}></i>
             </div>
           </div>
         </div>
