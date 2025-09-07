@@ -86,7 +86,7 @@ const DrawflowEditor = () => {
         const element = document.getElementById(`initial-${node_id}`);
         console.log(element, node_id);
         if (!element?.value) {
-          alert(`Please fill in the Initial Value for node ID ${node_id}`);
+          notify(`Please fill in the Initial Value for node ID ${node_id}`, "error");
           return 0;
         }
       }
@@ -168,6 +168,7 @@ const DrawflowEditor = () => {
     },
 
   }
+
 
 
 const addNodeToDrawFlow = (name, pos_x, pos_y) => {
@@ -312,8 +313,8 @@ const domainOptions = [
     { type: "ce_store", symbol: "Ce", defaultLabel: "Chemical Compound" },
     { type: "re", symbol: "R", defaultLabel: "Resistance" },
     { type: "rxn", symbol: "Re", defaultLabel: "Chemical Reaction" },
-    { type: "se", symbol: "Se", defaultLabel: "SE" },
-    { type: "sf", symbol: "Sf", defaultLabel: "SF" },
+    { type: "se", symbol: "Se", defaultLabel: "Effort Source" },
+    { type: "sf", symbol: "Sf", defaultLabel: "Flow Source" },
     { type: "f_junc", symbol: "1", defaultLabel: "1" },
     { type: "e_junc", symbol: "0", defaultLabel: "0" },
   ];
@@ -571,9 +572,45 @@ const nodeTypes = [
       </div>
     )}
 
-    <div className="wrapper">
-      <div className="col">
-        {baseNodeTypes.map((node) => (
+      <div className="wrapper">
+        <div className="col">
+          {baseNodeTypes.map((node) => (
+            <div
+              key={node.type}
+              className="drag-drawflow"
+              draggable="true"
+              onDragStart={(e) => handleDragStart(e, node.type)}
+            >
+              <span className="node-symbol">{node.symbol}</span>
+              <span> {getLabel(node.type)}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
+          <div className="menu">
+            <ul>
+              <li onClick={checkNodeParams}>Export</li>  {/* open modal instead of handleExport */}
+              <li onClick={handleClearClick}>Clear</li>
+              <li>
+                Domain:
+                <select
+                  value={currDomain?.name ?? ""}
+                  onChange={(e) => {
+                    const d = domainOptions.find(x => x.name === e.target.value);
+                    setCurrDomain(d ?? null);
+                  }}
+                >
+                  <option value="">-- General (Select a Domain) --</option>
+                  {domainOptions.map(d => (
+                    <option key={d.name} value={d.name}>{d.name}</option>
+                  ))}
+                </select>
+              </li>
+            </ul>
+          </div>
+
+
           <div
             key={node.type}
             className="drag-drawflow"
@@ -615,13 +652,27 @@ const nodeTypes = [
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
-          <div className="btn-lock" onClick={handleLockToggle}>
-            <i className={`fas ${isLocked ? 'fa-lock' : 'fa-lock-open'}`}></i>
-          </div>
-          <div className="bar-zoom">
-            <i className="fas fa-search-minus" onClick={drawflowAPI.zoomOut}></i>
-            <i className="fas fa-search" onClick={drawflowAPI.zoomReset}></i>
-            <i className="fas fa-search-plus" onClick={drawflowAPI.zoomIn}></i>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                sendToBackend();
+              }}>
+                <h2>Choose simulation parameters</h2>
+                <label>
+                  Duration (seconds):
+                  <input 
+                    id="duration" 
+                    type="number"
+                    name="duration" 
+                    defaultValue="5" 
+                    min="1"           
+                    step="1"         
+                    required 
+                  />
+                </label>
+                <button type="submit">Start Simulation</button>
+              </form>
+
           </div>
         </div>
       </div>
