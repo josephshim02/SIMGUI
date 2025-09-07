@@ -2,15 +2,15 @@
 
 
 ### How to use this Demo (modeling a simple mass-spring-damper system)
-Step 1: Drag and drop flow source, Inertia, Capacitance and junction 1 component onto the canvas.
-Step 2: Connect right output of flow source to left input of junction 1.
-Step 3: Connect right output of junction 1 to left input of Inertia.
-Step 4: Connect right output of Inertia to left input of Capacitance.
-Step 5.0: Click on the flow source component to set the function to "Sine Wave".
-Step 5.1: Click on the Inertia component to set Parameter and initial value to a positive number.
-Step 5.2: Click on the Capacitance component to set Parameter and initial value to a positive number.
-Step 6: Click on the "Run Simulation" button on the top right corner to run the simulation, input the time range for the simulation.
-Step 7: Let it cook and have some coffee. After a few dozen seconds, the simulation result will be displayed on the right side of the screen.
+- Step 1: Drag and drop flow source, Inertia, Capacitance and junction 1 component onto the canvas.
+- Step 2: Connect right output of flow source to left input of junction 1.
+- Step 3: Connect right output of junction 1 to left input of Inertia.
+- Step 4: Connect right output of Inertia to left input of Capacitance.
+    - Step 5.0: Click on the flow source component to set the function to "Sine Wave".
+    - Step 5.1: Click on the Inertia component to set Parameter and initial value to a positive number.
+    - Step 5.2: Click on the Capacitance component to set Parameter and initial value to a positive number.
+- Step 6: Click on the "Run Simulation" button on the top right corner to run the simulation, input the time range for the simulation.
+- Step 7: Let it cook and have some coffee. After a few dozen seconds, the simulation result will be displayed on the right side of the screen.
 
 
 ### **Modeling and Simulation GUI: Core Components**
