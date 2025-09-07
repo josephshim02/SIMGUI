@@ -355,7 +355,7 @@ const domainOptions = [
         }}
         style={{ marginLeft: 12 }}
         >
-          <option value="">-- Select Domain --</option>
+          <option value="">-- General (Select a Domain) --</option>
           {domainOptions.map(d => (
             <option key={d.name} value={d.name}>{d.name}</option>
           ))}
