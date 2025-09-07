@@ -619,6 +619,7 @@ const nodeTypes = [
         <div className="modal-content" onClick={e => e.stopPropagation()}>
           <form onSubmit={(e) => {
             e.preventDefault();
+            notify('Simulation started!', 'info', 5000);
             sendToBackend();
             closeModal();
           }}>
