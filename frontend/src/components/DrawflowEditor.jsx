@@ -63,6 +63,12 @@ const DrawflowEditor = () => {
   const [isLocked, setIsLocked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currDomain, setCurrDomain] = useState(null);
+  //For pop submit window
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  
 
   useEffect(() => {
     if (drawflowRef.current && !editorRef.current) {
@@ -462,26 +468,26 @@ const domainOptions = [
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li onClick={handleExport}>Export</li>
+              <li onClick={openModal}>Export</li>  {/* open modal instead of handleExport */}
               <li onClick={drawflowAPI.clear}>Clear</li>
               <li>
                 Domain:
-                  <select
-                    value={currDomain?.name ?? ""}
-                    onChange={(e) => {
-                      const d = domainOptions.find(x => x.name === e.target.value);
-                      setCurrDomain(d ?? null);
-                    }}
-                    >
-                      <option value="">-- General (Select a Domain) --</option>
-                      {domainOptions.map(d => (
-                        <option key={d.name} value={d.name}>{d.name}</option>
-                      ))}
-                  </select>
+                <select
+                  value={currDomain?.name ?? ""}
+                  onChange={(e) => {
+                    const d = domainOptions.find(x => x.name === e.target.value);
+                    setCurrDomain(d ?? null);
+                  }}
+                >
+                  <option value="">-- General (Select a Domain) --</option>
+                  {domainOptions.map(d => (
+                    <option key={d.name} value={d.name}>{d.name}</option>
+                  ))}
+                </select>
               </li>
             </ul>
           </div>
-          
+
           <div
             id="drawflow"
             ref={drawflowRef}
@@ -500,6 +506,53 @@ const domainOptions = [
         </div>
         <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} />
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div 
+          className="modal-overlay" 
+          onClick={closeModal} // close when clicking outside
+        >
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <form action="POST">
+              <h2>Choose simulation parameters</h2>
+              <label>
+                Duration:
+                <input id="duration" type="int" name="duration" defaultValue="5" required />
+              </label>
+
+              {() => {
+                const data = editorRef.current.export() ?? {};
+                const nodes=[];
+                for (const node_id in data.drawflow.Home.data) {
+                  const node = data.drawflow.Home.data[node_id];
+                  if (node.name === 'e_store') {
+                    console.log('e_store node found:', node_id);
+                    nodes.push(
+                      <div key={node_id}>
+                        <label>
+                          C-{node_id} initial value:
+                          <input
+                            type="number"
+                            step="any"
+                            value={nodeParams[node_id] ?? ""}
+                            onChange={e => handleNodeParamChange(node_id, parseFloat(e.target.value))}
+                            placeholder="0.0"
+                            required
+                          />
+                        </label>
+                      </div>
+                    );
+                  }
+              }
+
+              return nodes;
+              }()}    
+            </form>
+          </div>
+        </div>
+        
+      )}
     </div>
   );
 };
