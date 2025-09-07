@@ -14,11 +14,11 @@ const makeMeta = (symbol, io, className, body) =>
 // preset 7 type of nodes, make those as objects where omit the fields
 const NODE_META = {
   // Parameter-type: 1 in, 1 out, with parameter
-  f_store: makeMeta('I', [1, 1], 'f_store', 'param'),
-  e_store: makeMeta('C', [1, 1], 'e_store', 'param'),
-  re: makeMeta('R', [1, 1], 're', 'param'),
-  rxn: makeMeta('Re', [1, 1], 'rxn', 'param'),
-
+  f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
+  e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
+  ce_store: makeMeta('Ce',  [1,1], 'ce_store', 'param'),
+  re:      makeMeta('R',  [1,1], 're',      'param'),
+  rxn:      makeMeta('Re',  [1,1], 'rxn',      'param'),
 
   // Source-type: only 1 out, with source
   se: makeMeta('Se', [0, 1], 'se', 'source'),
@@ -82,7 +82,7 @@ const DrawflowEditor = () => {
     const data = editorRef.current.export();
     const usefulData = data.drawflow.Home.data;
     for (const node_id in usefulData) {
-      if (usefulData[node_id].name == 'e_store') {
+      if (usefulData[node_id].name == 'e_store' || usefulData[node_id].name == 'ce_store') {
         const element = document.getElementById(`initial-${node_id}`);
         console.log(element, node_id);
         if (!element?.value) {
@@ -230,16 +230,19 @@ const addNodeToDrawFlow = (name, pos_x, pos_y) => {
     `;
   setNodeCounter(prev => prev + 1);
 
-  // render inner HTML using meta data
-  const renderNodeHTML = (name, meta, getLabel) => {
-    console.log(meta.className === "e_store");
-    const innerp = meta.body === 'param' ? ParamField
-      : meta.body === 'source' ? SourceField
-        : '';
-    const inneri = meta.className === 'e_store' ? InitialValueField
-      : '';
-    return wrap(meta.symbol, getLabel(name), innerp, inneri);
-  };
+    // render inner HTML using meta data
+    const renderNodeHTML = (name, meta, getLabel) => {
+      console.log(meta.className === "e_store");
+      const innerp = meta.body === 'param' ? ParamField
+        : meta.body === 'source' ? SourceField
+          : '';
+      const inneri =
+        (meta.className === 'e_store' || meta.className === 'ce_store')
+          ? InitialValueField
+          : '';
+
+      return wrap(meta.symbol, getLabel(name), innerp, inneri);
+    };
 
   const m = NODE_META[name];
   const defaultData =
@@ -292,9 +295,10 @@ const domainOptions = [
     se: "Pressure Source",
     sf: "Flow Source"
   },
-  {
-    name: "Chemical (Chemical Potential)",
-    e_store: "Molar Concentration",
+  { 
+    name: "Chemical (Chemical Potential)",                    
+    e_store: "Molar Concentration",  
+    ce_store:"Chemical Compound",
     re: "Reaction Resistance",
     rxn: "Chemical Reaction",
     se: "Chemical Potential",
@@ -302,16 +306,24 @@ const domainOptions = [
   },
 ];
 
-const baseNodeTypes = [
-  { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
-  { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
-  { type: "re", symbol: "R", defaultLabel: "Resistance" },
-  { type: "rxn", symbol: "Re", defaultLabel: "Chemical Reaction" },
-  { type: "se", symbol: "Se", defaultLabel: "SE" },
-  { type: "sf", symbol: "Sf", defaultLabel: "SF" },
-  { type: "f_junc", symbol: "1", defaultLabel: "1" },
-  { type: "e_junc", symbol: "0", defaultLabel: "0" },
-];
+  const baseNodeTypes = [
+    { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
+    { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
+    { type: "ce_store", symbol: "Ce", defaultLabel: "Chemical Compound" },
+    { type: "re", symbol: "R", defaultLabel: "Resistance" },
+    { type: "rxn", symbol: "Re", defaultLabel: "Chemical Reaction" },
+    { type: "se", symbol: "Se", defaultLabel: "SE" },
+    { type: "sf", symbol: "Sf", defaultLabel: "SF" },
+    { type: "f_junc", symbol: "1", defaultLabel: "1" },
+    { type: "e_junc", symbol: "0", defaultLabel: "0" },
+  ];
+
+  const groupedSidebar = [
+    { title: 'Elements',  keys: ['f_store', 'e_store', 're', 'rxn'] },
+    { title: 'Sources',   keys: ['se', 'sf'] },
+    { title: 'Junctions', keys: ['f_junc', 'e_junc'] },
+  ];
+
 
 const getLabel = (type) => {
   if (!currDomain) {
@@ -542,12 +554,12 @@ const nodeTypes = [
   { type: "e_junc", symbol: "0", label: "0" },
 ];
 
-return (
-  <div className="drawflow-app">
-    <ConnectionRulesPopup />
-    <header>
-      <h2>Drawflow</h2>
-    </header>
+  return (
+    <div className="drawflow-app">
+      <ConnectionRulesPopup />
+      <header>
+        <h2>SIMGUI</h2>
+      </header>
     {banner.visible && (
       <div
         className={`banner banner--${banner.type}`}
