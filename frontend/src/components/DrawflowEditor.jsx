@@ -300,9 +300,9 @@ const DrawflowEditor = () => {
       style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
       onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
         <option param="unit-step">Unit Step Input</option>
-        <option param="sinusoidal">Sinusoidal Input</option>
+        <option param="sine-wave">Sine Wave Input</option>
         <option param="square-wave">Square Wave Input</option>
-        <option param="impulse">Impulse Input</option>
+        <option param="sawtooth-wave">Sawtooth Wave Input</option>
     </select>
     `;
 
@@ -315,9 +315,16 @@ const DrawflowEditor = () => {
     };
 
     const m = NODE_META[name];
+    const defaultData =
+      m.body === "param"
+        ? { param: "1.0" }
+        : m.body === "source"
+        ? { input: { type: "Unit Step Input" } }
+        : {};
     if (m) {
       const html = renderNodeHTML(name, m, getLabel);
-      editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
+      // editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
+      editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, defaultData, html);
       return;
     } else {
       console.warn('Unknown node type:', name);
