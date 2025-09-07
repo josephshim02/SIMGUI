@@ -47,33 +47,10 @@ const DrawflowEditor = () => {
     }, []);
 
     const setupEventListeners = (editor) => {
-        editor.on("nodeCreated", (id) => {
-            console.log("Node created " + id);
-        });
-
-        editor.on("nodeRemoved", (id) => {
-            console.log("Node removed " + id);
-        });
-
-        editor.on("nodeSelected", (id) => {
-            console.log("Node selected " + id);
-        });
-
-        editor.on("moduleCreated", (name) => {
-            console.log("Module Created " + name);
-        });
-
-        editor.on("moduleChanged", (name) => {
-            console.log("Module Changed " + name);
-        });
         editor.on("connectionCreated", function (connection) {
             // Get the nodes involved in the connection
             const outputNode = editor.getNodeFromId(connection.output_id);
             const inputNode = editor.getNodeFromId(connection.input_id);
-
-            console.log(
-                `Attempting to connect ${outputNode.name} to ${inputNode.name}`
-            );
 
             // Check if connection is allowed using rules.js
             if (
@@ -85,53 +62,20 @@ const DrawflowEditor = () => {
                     connection.input_id
                 ) == false
             ) {
-                console.log("Connection not allowed by rules");
                 // Remove the invalid connection
                 editor.removeSingleConnection(
                     connection.output_id,
                     connection.input_id,
                     connection.output_class,
-                    connection.input_class
                 );
 
                 alert(
                     `Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`
                 );
                 // Show feedback to user
-                console.log(
-                    `Connection blocked: ${outputNode.name} cannot connect to ${inputNode.name}`
-                );
             }
         });
 
-        editor.on("connectionRemoved", (connection) => {
-            console.log("Connection removed");
-            console.log(connection);
-        });
-
-        // editor.on("mouseMove", (position) => {
-        //   console.log("Position mouse x:" + position.x + " y:" + position.y);
-        // });
-
-        // editor.on("nodeMoved", (id) => {
-        //   console.log("Node moved " + id);
-        // });
-
-        // editor.on("zoom", (zoom) => {
-        //   console.log("Zoom level " + zoom);
-        // });
-
-        // editor.on("translate", (position) => {
-        //   console.log("Translate x:" + position.x + " y:" + position.y);
-        // });
-
-        // editor.on("addReroute", (id) => {
-        //   console.log("Reroute added " + id);
-        // });
-
-        // editor.on("removeReroute", (id) => {
-        //   console.log("Reroute removed " + id);
-        // });
     };
 
     const handleDragStart = (e, nodeType) => {
@@ -352,7 +296,6 @@ const DrawflowEditor = () => {
     const handleExport = () => {
         if (editorRef.current) {
             const data = editorRef.current.export();
-            console.log("Export data:", data);
             sendToBackend(data);
         }
     };
@@ -376,8 +319,6 @@ const DrawflowEditor = () => {
 
             var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
             const cleanedData = cleanDrawflowData(drawFlowDict);
-            console.log("Cleaned Data:", cleanedData);
-            console.log(JSON.stringify(cleanedData));
              
             const response = await fetch("https://338db935306a.ngrok-free.app/echo", {
                 method: "POST",
@@ -387,16 +328,12 @@ const DrawflowEditor = () => {
                 body: JSON.stringify(cleanedData),
             });
 
-            console.log(response);
             const result = await response.json();
-
-            console.log("Result:", result);
 
             setData(result);
             setIsVisible(1);
 
         } catch (error) {
-            console.error("Error sending data to backend:", error);
             alert("Error connecting to backend: " + error.message);
         } finally {
             // Reset button state

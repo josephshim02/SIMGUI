@@ -6,7 +6,7 @@ using .DrawflowToBondGraph
 using JSON
 
 Genie.Configuration.config!(
-  cors_allowed_origins = ["http://localhost:5173/"],
+  cors_allowed_origins = ["http://localhost:5173/", "https://simgui.vercel.app/"],
   cors_headers = Dict(
     "Access-Control-Allow-Methods" => "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers" => "Content-Type, Authorization",
