@@ -471,7 +471,7 @@ const sendToBackend = async () => {
     cleanedData['drawflow']['simulation'] = simulationParameters;
     console.log('Cleaned Data:', cleanedData);
 
-    const response = await fetch("https://338db935306a.ngrok-free.app/echo", {
+    const response = await fetch("http://localhost:8000/api/simulate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

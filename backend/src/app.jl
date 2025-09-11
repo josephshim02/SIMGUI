@@ -1,8 +1,7 @@
-module App
-using Genie, Genie.Renderer.Json, Genie.Requests
-using HTTP
 include("DrawflowToBondGraph.jl")
+using Genie, Genie.Requests
 using .DrawflowToBondGraph
+using HTTP
 using JSON
 
 Genie.Configuration.config!(
@@ -13,20 +12,15 @@ Genie.Configuration.config!(
     "Access-Control-Allow-Credentials" => "true"
   )
 )
-# Health check endpoint
-route("/") do
-  HTML("Healthy")
+
+
+route("/api/health") do
+    Genie.Renderer.Json.json(Dict("status" => "healthy"), headers = Dict(
+        "Access-Control-Allow-Origin" => "*"
+    ))
 end
 
-# Echo endpoint for testing
-# route("/echo", method = POST) do
-#   bg, enhanced_data = convert_drawflow_to_bondgraph(JSON.parse(JSON.json(jsonpayload())), verbose=true)
-#   sol, relations = simulate_bondgraph(bg, tspan=(0.0, 10.0), verbose=true)
-#   solution_data = save_solution_json(sol, include_metadata=true)
-#   return solution_data
-# end
-
-route("/echo", method = POST) do
+route("/api/simulate", method = POST) do
   json_data = JSON.parse(JSON.json(jsonpayload()))
   bg, enhanced_data = convert_drawflow_to_bondgraph(json_data, verbose=true)
   simulation_data = json_data["drawflow"]["simulation"]
@@ -35,6 +29,4 @@ route("/echo", method = POST) do
   return solution_data
 end
 
-up(async = false)
-
-end
+up(8000, "0.0.0.0", async = false)
