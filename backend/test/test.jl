@@ -4,7 +4,7 @@ Simple test script using DrawflowToBondGraph module
 """
 
 # Include the module
-include("DrawflowToBondGraph.jl")
+include("../src/DrawflowToBondGraph.jl")
 using .DrawflowToBondGraph
 
 println("=== Testing DrawflowToBondGraph Module ===")
