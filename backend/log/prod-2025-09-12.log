@@ -1,0 +1,25 @@
+┌ Error: 2025-09-12 14:47:02 UndefVarError(:PLUGINS_WITH_ASSETS, Main.app)
+└ @ Main.app /julia/packages/GenieFramework/sLFpM/src/GenieFramework.jl:81
+┌ Error: 2025-09-12 14:47:23 UndefVarError(:PLUGINS_WITH_ASSETS, Main.app)
+└ @ Main.app /julia/packages/GenieFramework/sLFpM/src/GenieFramework.jl:81
+┌ Info: 2025-09-12 14:50:54 
+│ Web Server starting at http://0.0.0.0:8000 - press Ctrl/Cmd+C to stop the server. 
+└ @ Genie.Server /julia/packages/Genie/EYyOK/src/Server.jl:182
+┌ Info: 2025-09-12 14:50:54 Listening on: 0.0.0.0:8000, thread id: 1
+└ @ HTTP.Servers /julia/packages/HTTP/JcAHX/src/Servers.jl:382
+┌ Info: 2025-09-12 14:51:52 Server on 0.0.0.0:8000 closing
+└ @ HTTP.Servers /julia/packages/HTTP/JcAHX/src/Servers.jl:409
+┌ Info: 2025-09-12 14:51:55 
+│ Web Server starting at http://0.0.0.0:8000 - press Ctrl/Cmd+C to stop the server. 
+└ @ Genie.Server /julia/packages/Genie/EYyOK/src/Server.jl:182
+┌ Info: 2025-09-12 14:51:55 Listening on: 0.0.0.0:8000, thread id: 1
+└ @ HTTP.Servers /julia/packages/HTTP/JcAHX/src/Servers.jl:382
+┌ Info: 2025-09-12 14:51:57 Server on 0.0.0.0:8000 closing
+└ @ HTTP.Servers /julia/packages/HTTP/JcAHX/src/Servers.jl:409
+┌ Info: 2025-09-12 14:52:01 
+│ Web Server starting at http://0.0.0.0:8000 - press Ctrl/Cmd+C to stop the server. 
+└ @ Genie.Server /julia/packages/Genie/EYyOK/src/Server.jl:182
+┌ Info: 2025-09-12 14:52:01 Listening on: 0.0.0.0:8000, thread id: 1
+└ @ HTTP.Servers /julia/packages/HTTP/JcAHX/src/Servers.jl:382
+┌ Info: 2025-09-12 15:00:08 Server on 0.0.0.0:8000 closing
+└ @ HTTP.Servers /julia/packages/HTTP/JcAHX/src/Servers.jl:409

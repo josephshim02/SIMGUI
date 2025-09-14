@@ -13,7 +13,11 @@ RUN apt-get update && apt-get install -y \
 # Copy Project.toml and Manifest.toml first (for better caching)
 COPY Project.toml Manifest.toml* ./
 
-# Set Julia depot path and number of threads for compilation
+#Move julia startup script into appropriate directory in container
+COPY julia_startup.jl /julia/config/startup.jl
+
+# Set Julia depot path so julia knows where to find startup.jl
+# and set number of threads for compilation
 ENV JULIA_DEPOT_PATH=/julia
 ENV JULIA_NUM_THREADS=1
 
@@ -23,10 +27,11 @@ RUN julia --project=. -e 'using Pkg; \
     Pkg.precompile();'
 
 # Copy the rest of the application
-COPY . .
+# COPY . .
+COPY . /app
 
 # Expose port (adjust as needed)
 EXPOSE 8000
 
-# Run the application
-CMD ["julia", "--project=.", "src/app.jl"]
+# start julia REPL, this will automatically call "~/.julia/config/startup.jl"
+CMD ["julia"]

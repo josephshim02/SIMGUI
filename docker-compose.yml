@@ -11,9 +11,16 @@ services:
     container_name: genie-backend
     ports:
       - "8000:8000"
+    # This 'mounts' your local filesystem into the container so the container can see changes you
+    # make locally. This way you don't have to re run the container every time you make changes
+    # (note confusingly the keyword volumes: can be used to create a Volume or a Mount, 
+    # in this case it creates a Mount)
+    volumes:
+      - ./backend:/app   
     environment:
       - JULIA_NUM_THREADS=2
-      - GENIE_ENV=prod
+      - GENIE_ENV=dev
+      - JULIA_REVISE_POLL=1
     # Runtime resource limits
     deploy:
       resources:
