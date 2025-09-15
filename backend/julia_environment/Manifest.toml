@@ -2,12 +2,12 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "b9c5ff5fbe0807d9723cf5a045e7979490546b96"
+project_hash = "7e9268c9ba43370fb12e2f8f24682b99249298e4"
 
 [[deps.ADTypes]]
-git-tree-sha1 = "60665b326b75db6517939d0e1875850bc4a54368"
+git-tree-sha1 = "27cecae79e5cc9935255f90c53bb831cc3c870d7"
 uuid = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
-version = "1.17.0"
+version = "1.18.0"
 weakdeps = ["ChainRulesCore", "ConstructionBase", "EnzymeCore"]
 
     [deps.ADTypes.extensions]
@@ -761,9 +761,9 @@ version = "0.6.3"
 
 [[deps.DynamicQuantities]]
 deps = ["DispatchDoctor", "PrecompileTools", "TestItems", "Tricks"]
-git-tree-sha1 = "44ec2bcde862031866a9f43ee477eaa1ddb0cccc"
+git-tree-sha1 = "57c48a46e27d67208ad51c564b078a90bbd0dc2c"
 uuid = "06fc5a27-2a28-4c7c-a15d-362465fb6821"
-version = "1.8.0"
+version = "1.10.0"
 
     [deps.DynamicQuantities.extensions]
     DynamicQuantitiesLinearAlgebraExt = "LinearAlgebra"
@@ -1098,9 +1098,9 @@ version = "0.5.5"
 
 [[deps.Genie]]
 deps = ["ArgParse", "Base64", "Dates", "Distributed", "DotEnv", "EzXML", "FilePathsBase", "HTTP", "HttpCommon", "Inflector", "JSON3", "JuliaFormatter", "Logging", "LoggingExtras", "LoweredCodeUtils", "MIMEs", "Markdown", "Millboard", "Nettle", "OrderedCollections", "Pkg", "REPL", "Random", "Reexport", "Revise", "SHA", "Serialization", "Sockets", "UUIDs", "Unicode", "XML2_jll", "YAML"]
-git-tree-sha1 = "339bb0379a36b3ecc2de1042d25b7bb6bce4a97e"
+git-tree-sha1 = "df21c321b745588abce097aad99d3095d1c79e80"
 uuid = "c43c736e-a2d1-11e8-161f-af95117fbd1e"
-version = "5.33.11"
+version = "5.33.13"
 
 [[deps.GeometryBasics]]
 deps = ["EarCut_jll", "Extents", "IterTools", "LinearAlgebra", "PrecompileTools", "Random", "StaticArrays"]
@@ -2289,12 +2289,6 @@ deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpn
 git-tree-sha1 = "cf181f0b1e6a18dfeb0ee8acc4a9d1672499626c"
 uuid = "f57f5aa1-a3ce-4bc8-8ab9-96f992907883"
 version = "0.4.4"
-
-[[deps.PackageCompiler]]
-deps = ["Artifacts", "Glob", "LazyArtifacts", "Libdl", "Pkg", "Printf", "RelocatableFolders", "TOML", "UUIDs", "p7zip_jll"]
-git-tree-sha1 = "3f7c426a9ab9f44608019f6406044c9162b5e0d9"
-uuid = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
-version = "2.2.2"
 
 [[deps.Packing]]
 deps = ["GeometryBasics"]

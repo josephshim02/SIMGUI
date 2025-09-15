@@ -27,7 +27,7 @@ function setRoutes()
   route("/api/simulate", method = POST) do
     println("fff");
     json_data = JSON.parse(JSON.json(jsonpayload()))
-    solution_data = Main.App.simulate(json_data)
+    solution_data = simulate(json_data)
     return solution_data
   end
 end

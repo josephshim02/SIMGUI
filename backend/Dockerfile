@@ -11,20 +11,17 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Project.toml and Manifest.toml first (for better caching)
-COPY Project.toml Manifest.toml* ./
+COPY julia_environment/Project.toml julia_environment/Manifest.toml* /julia/environments/v1.11/
 
-#Move julia startup script into appropriate directory in container
-COPY julia_startup.jl /julia/config/startup.jl
 
-# Set Julia depot path so julia knows where to find startup.jl
-# and set number of threads for compilation
+# Set Julia depot path and set number of threads for compilation
 ENV JULIA_DEPOT_PATH=/julia
 ENV JULIA_NUM_THREADS=1
 
 # Precompile packages with reduced parallelism to save memory
-RUN julia --project=. -e 'using Pkg; \
-    Pkg.instantiate(); \
-    Pkg.precompile();'
+RUN julia --project=/julia/environments/v1.11 -e 'using Pkg; Pkg.instantiate()'
+RUN julia --project=/julia/environments/v1.11 -e 'using Pkg; Pkg.precompile()'
+
 
 # Copy the rest of the application
 # COPY . .
@@ -33,5 +30,5 @@ COPY . /app
 # Expose port (adjust as needed)
 EXPOSE 8000
 
-# start julia REPL, this will automatically call "~/.julia/config/startup.jl"
-CMD ["julia"]
+# start julia REPL upon running container (in practice unfortunately we actually have to exec into the container)
+CMD ["julia", "--project=/julia/environments/v1.11"]
