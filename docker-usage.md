@@ -73,11 +73,11 @@
    # iv. Edit method1 on local machine
    # v. Call method <modulename>.<method1> 
    # *WOW* you should see the changed method without having to re precompile all the packages
-   # NOTE 1: If your module uses a new package then unfortunately you will have to go back to step 3 and rebuild the whole container
+   # NOTE 1: If your module uses a new package not in project.toml then unfortunately you will have to go back to step 3 and rebuild the whole container
    # NOTE 2: Supposing your module (Module_1) contains a method (method_1) which calls another method (method_2) from another local
-   # module (Module_2). Then if you want to change method_2, and then in the REPL call Module_1.method_1() and see the new method_2() be called
+   # module (Module_2). Then if you want to change method_2, then in the REPL call Module_1.method_1() and see the new method_2() be called
    # THEN: You most *not* put "include('Module_2')" and using .Module_2 at the start of Module_1.
-   # AND: when you call method_2 inside Module_1 call it with "Main.Module_2"
+   # AND: when you call method_2 inside Module_1 call it with "Main.Module_2.method_2()"
 
 ## Issue when trying to stop, recompile and restart server
 - Run `docker ps -a` to see current containers
