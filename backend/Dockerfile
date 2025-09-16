@@ -19,8 +19,7 @@ ENV JULIA_DEPOT_PATH=/julia
 ENV JULIA_NUM_THREADS=1
 
 # Precompile packages with reduced parallelism to save memory
-RUN julia --project=/julia/environments/v1.11 -e 'using Pkg; Pkg.instantiate()'
-RUN julia --project=/julia/environments/v1.11 -e 'using Pkg; Pkg.precompile()'
+RUN julia --project=/julia/environments/v1.11 -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
 
 
 # Copy the rest of the application

@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   backend:
-    image: testbuild3:latest
   #these lines make docker start an interactice
     stdin_open: true #docker run -i
     tty: true #docker run -t
