@@ -46,7 +46,7 @@
    ### Explanation of 'docker-compose up'/'docker-compose up backend'
    # 1 This will start the backend container and replace all files in docker's /app with all files in your local /backend
    # Moreover changing files within local /backend will also change files in docker's /app without the need to rebuild the container 
-   # 2 This will block the terminal, this is desired, leave it running for step 6
+   # 2 This will block the terminal you ran 'docker-compose up' in. This is intended, we just need the container to be running for step 6
 6. Start the backend/Genie server
    1 open a new terminal
    2 Inside the new terminal run:

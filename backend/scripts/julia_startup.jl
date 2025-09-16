@@ -1,4 +1,4 @@
-#Fore some reason if I add Revise to the toml file then my docker is unable to build, but it might work for you
+#Fore some reason if I add Revise to the local toml file then my docker is unable to build, but it might work for you
 using Pkg
 Pkg.add("Revise")
 using Revise
