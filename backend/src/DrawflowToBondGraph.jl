@@ -1,3 +1,5 @@
+module DrawflowToBondGraph
+
 #!/usr/bin/env julia
 """
 DrawflowToBondGraph.jl
@@ -14,7 +16,11 @@ using Plots
 using ModelingToolkit
 using JSON
 
-export convert_drawflow_to_bondgraph, simulate_bondgraph, plot_bondgraph, plot_simulation, save_solution_json, set_component_parameter, get_component_parameter
+export testing_revise, convert_drawflow_to_bondgraph, simulate_bondgraph, plot_bondgraph, plot_simulation, save_solution_json, set_component_parameter, get_component_parameter
+
+function testing_revise()
+  println("hello world")
+end
 
 """
     convert_drawflow_to_bondgraph(json_file::String; verbose::Bool=true)
@@ -259,7 +265,7 @@ sol = simulate_bondgraph(bg)
 """
 function simulate_bondgraph(bg::BondGraph; simulation_data::Dict=Dict(), verbose::Bool=true)
     if verbose
-        println("4. SIMULATING THE BONDGRAPH")
+        println("4. SIMULATING THE BONDGRAPH - oh wait, it's working!!")
         println("=" ^ 50)
     end
 
@@ -513,3 +519,4 @@ function get_component_parameter(component_map::Dict, component_name::String, pa
 end
 
 end # module
+end
