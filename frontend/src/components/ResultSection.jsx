@@ -46,7 +46,7 @@ const ResultSection = ({isVisible, setIsVisible, data}) => {
             if (ro) ro.disconnect();
             if (node) Plotly.purge(node);
         };
-    }, [isVisible]);
+    }, [isVisible, data]);
 
     return (
         <>

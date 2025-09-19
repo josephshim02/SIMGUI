@@ -497,50 +497,6 @@ const sendToBackend = async () => {
 };
 
 
-const handleClear = () => {
-  if (editorRef.current) {
-    editorRef.current.clearModuleSelected();
-  }
-};
-
-const handleLockToggle = () => {
-  if (editorRef.current) {
-    if (isLocked) {
-      editorRef.current.editor_mode = "edit";
-    } else {
-      editorRef.current.editor_mode = "fixed";
-    }
-    setIsLocked(!isLocked);
-  }
-};
-
-const handleZoomIn = () => {
-  if (editorRef.current) {
-    editorRef.current.zoom_in();
-  }
-};
-
-const handleZoomOut = () => {
-  if (editorRef.current) {
-    editorRef.current.zoom_out();
-  }
-};
-
-const handleZoomReset = () => {
-  if (editorRef.current) {
-    editorRef.current.zoom_reset();
-  }
-};
-
-const nodeTypes = [
-  { type: "f_store", symbol: "I", label: "Inertia" },
-  { type: "e_store", symbol: "C", label: "Capacitance" },
-  { type: "re", symbol: "R", label: "Resistance" },
-  { type: "se", symbol: "Se", label: "SE" },
-  { type: "sf", symbol: "Sf", label: "SF" },
-  { type: "f_junc", symbol: "1", label: "1" },
-  { type: "e_junc", symbol: "0", label: "0" },
-];
 
   return (
     <div className="drawflow-app">
