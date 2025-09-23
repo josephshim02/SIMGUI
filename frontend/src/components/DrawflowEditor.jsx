@@ -5,60 +5,30 @@ import "./DrawflowEditor.css";
 import { checkRules } from "./rules";
 import ResultSection from "./ResultSection";
 import ConnectionRulesPopup from './ConnectionRulesPopup';
+import { NODE_META, domainOptions, baseNodeTypes, groupedSidebar } from "../utils/drawflowConstants.js";
+import { cleanDrawflowData } from "../utils/drawflowUtils";
 
+async function sendToBackend(drawflowData, duration = 5) {
+  var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
+  const cleanedData = cleanDrawflowData(drawFlowDict);
+  const simulationParameters = { 'time': duration};
 
-// meta about node: io = [inputs, outputs]；body = 'param' | 'source' | 'none'
-const makeMeta = (symbol, io, className, body) =>
-  ({ symbol, inputs: io[0], outputs: io[1], className, body });
+  cleanedData['drawflow']['simulation'] = simulationParameters;
+  console.log('Cleaned Data:', cleanedData);
 
-// preset 7 type of nodes, make those as objects where omit the fields
-const NODE_META = {
-  // Parameter-type: 1 in, 1 out, with parameter
-  f_store: makeMeta('I',  [1,1], 'f_store', 'param'),
-  e_store: makeMeta('C',  [1,1], 'e_store', 'param'),
-  ce_store: makeMeta('Ce',  [1,1], 'ce_store', 'param'),
-  re:      makeMeta('R',  [1,1], 're',      'param'),
-  rxn:      makeMeta('Re',  [1,1], 'rxn',      'param'),
-
-  // Source-type: only 1 out, with source
-  se: makeMeta('Se', [0, 1], 'se', 'source'),
-  sf: makeMeta('Sf', [0, 1], 'sf', 'source'),
-
-  // Junction-type: 1 in 1 out, no inner form
-  f_junc: makeMeta('1', [1, 1], 'f_junc', 'none'),
-  e_junc: makeMeta('0', [1, 1], 'e_junc', 'none'),
-};
-
-
-//counts number of nodes so we can give the input/select parameter fields of each node
-// a unique id corresponding to the node id
-
-function cleanDrawflowData(drawflowData) {
-  const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
-  const usefulData = drawFlowDict.drawflow.Home.data;
-  for (const node_id in usefulData) {
-    delete usefulData[node_id].html;
-    const meta = NODE_META[usefulData[node_id].name];
-    let param_dict = {};
-    if (meta.body === 'param') {
-      const element = document.getElementById(`param-${node_id}`);
-      param_dict['parameters'] = element.value;
-    } else if (meta.body === 'source') {
-      const element = document.getElementById(`source-${node_id}`);
-      param_dict['source'] = element.value;
-    }
-    usefulData[node_id].params = param_dict;
-    console.log('param_dict:', param_dict);
-    // const param = meta.body === 'param'  ? document.getElementById(`param-${node_id}`)
-    //               : meta.body === 'source' ? document.getElementById(`source-${node_id}`);
-
-    // console.log('param:', param.value);
-  }
-  drawFlowDict.drawflow.Home.data = usefulData;
-  return drawFlowDict;
+  const response = await fetch("http://localhost:8000/api/simulate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(cleanedData),
+  });
+  return response.json();
 }
 
+
 const DrawflowEditor = () => {
+  const [isSimulating, setIsSimulating] = useState(false);
   const drawflowRef = useRef(null);
   const editorRef = useRef(null);
   const [data, setData] = useState(null);
@@ -84,7 +54,6 @@ const DrawflowEditor = () => {
     for (const node_id in usefulData) {
       if (usefulData[node_id].name == 'e_store' || usefulData[node_id].name == 'ce_store') {
         const element = document.getElementById(`initial-${node_id}`);
-        console.log(element, node_id);
         if (!element?.value) {
           notify(`Please fill in the Initial Value for ${usefulData[node_id].name}`, "error");
           return 0;
@@ -263,67 +232,7 @@ const addNodeToDrawFlow = (name, pos_x, pos_y) => {
   }
 };
 
-const domainOptions = [
-  {
-    name: "Mechanical (Force)",
-    f_store: "Mass",
-    e_store: "Spring",
-    re: "Damper",
-    se: "Force",
-    sf: "Velocity"
-  },
-  {
-    name: "Mechanical (Torque)",
-    f_store: "Moment of Inertia",
-    e_store: "Torsional Spring",
-    re: "Rotational Damper",
-    se: "Torque",
-    sf: "Angular Velocity"
-  },
-  {
-    name: "Electrical (Voltage)",
-    f_store: "Inductor",
-    e_store: "Capacitor",
-    re: "Resistor",
-    se: "Voltage Source",
-    sf: "Current Source"
-  },
-  {
-    name: "Fluid (Pressure/Force)",
-    f_store: "Fluid Inertia",
-    e_store: "Compliance",
-    re: "Fluid Resistance",
-    se: "Pressure Source",
-    sf: "Flow Source"
-  },
-  { 
-    name: "Chemical (Chemical Potential)",                    
-    e_store: "Molar Concentration",  
-    ce_store:"Chemical Compound",
-    re: "Reaction Resistance",
-    rxn: "Chemical Reaction",
-    se: "Chemical Potential",
-    sf: "Reaction Rate Source"
-  },
-];
 
-  const baseNodeTypes = [
-    { type: "f_store", symbol: "I", defaultLabel: "Inertia" },
-    { type: "e_store", symbol: "C", defaultLabel: "Capacitance" },
-    { type: "ce_store", symbol: "Ce", defaultLabel: "Chemical Compound" },
-    { type: "re", symbol: "R", defaultLabel: "Resistance" },
-    { type: "rxn", symbol: "Re", defaultLabel: "Chemical Reaction" },
-    { type: "se", symbol: "Se", defaultLabel: "Effort Source" },
-    { type: "sf", symbol: "Sf", defaultLabel: "Flow Source" },
-    { type: "f_junc", symbol: "1", defaultLabel: "1" },
-    { type: "e_junc", symbol: "0", defaultLabel: "0" },
-  ];
-
-  const groupedSidebar = [
-    { title: 'Elements',  keys: ['f_store', 'e_store', 're', 'rxn'] },
-    { title: 'Sources',   keys: ['se', 'sf'] },
-    { title: 'Junctions', keys: ['f_junc', 'e_junc'] },
-  ];
 
 
 const getLabel = (type) => {
@@ -447,52 +356,37 @@ const handleDrop = (e) => {
   addNodeToDrawFlow(nodeType, x, y);
 };
 
-const sendToBackend = async () => {
+
+// TO DO:
+const simulate = async () => {
+  if (isSimulating) {
+    notify("Cannot submit another simulation while simulations is running");
+    return;
+  }
+  // QUESTION: Was this just here for debugging or is it necesary?
   if (!editorRef.current) {
     console.error("Editor not initialized");
     return;
   }
-
   const drawflowData = editorRef.current.export();
-
+  const durationInput = document.getElementById('duration').value;
   try {
-    // Show loading state
-    const exportButton = document.querySelector('.export-btn');
-    if (exportButton) {
-      exportButton.textContent = 'Processing...';
-      exportButton.disabled = true;
-    }
-
-    var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
-    const cleanedData = cleanDrawflowData(drawFlowDict);
-    const durationInput = document.getElementById('duration');
-    const simulationParameters = { 'time': durationInput.value || 5};
-
-    cleanedData['drawflow']['simulation'] = simulationParameters;
-    console.log('Cleaned Data:', cleanedData);
-
-    const response = await fetch("http://localhost:8000/api/simulate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(cleanedData),
-    });
-
-    const result = await response.json();
-
+    setIsSimulating(true);
+    console.log("isSumlating: " + isSimulating);
+    // TO DO: Show loading state
+    
+    const result = await sendToBackend(drawflowData, durationInput);
+    console.log(result);
     setData(result);
     setIsVisible(1);
 
   } catch (error) {
+    console.log(error);
     notify(`Error connecting to backend: ${error.message}`, 'error');
   } finally {
-    // Reset button state
-    const exportButton = document.querySelector(".export-btn");
-    if (exportButton) {
-      exportButton.textContent = "Export & Simulate";
-      exportButton.disabled = false;
-    }
+    setIsSimulating(false);
+    console.log("isSumlating: " + isSimulating);
+    // TO DO: reset loading state
   }
 };
 
@@ -576,7 +470,7 @@ const sendToBackend = async () => {
           <form onSubmit={(e) => {
             e.preventDefault();
             notify('Simulation started!', 'info', 5000);
-            sendToBackend();
+            simulate();
             closeModal();
           }}>
             <h2>Choose simulation parameters</h2>

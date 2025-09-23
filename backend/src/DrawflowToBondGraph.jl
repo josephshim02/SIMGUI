@@ -265,7 +265,7 @@ sol = simulate_bondgraph(bg)
 """
 function simulate_bondgraph(bg::BondGraph; simulation_data::Dict=Dict(), verbose::Bool=true)
     if verbose
-        println("4. SIMULATING THE BONDGRAPH - oh wait, it's working!!")
+        println("4. SIMULATING THE BONDGRAPH")
         println("=" ^ 50)
     end
 
