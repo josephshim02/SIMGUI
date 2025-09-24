@@ -4,6 +4,9 @@ import Plotly from "plotly.js-dist-min";
 import { GridLoader } from "react-spinners";
 // index.js or App.jsx
 import "@lottiefiles/dotlottie-wc";
+import NotRunYet from "./NotRunYet";
+import LoadingResult from "./LoadingResult";
+import { preload } from 'react-dom';
 
 
 
@@ -67,32 +70,10 @@ const ResultSection = ({ isVisible, setIsVisible, data, isSimulating }) => {
 
         <div className="result-section">
           {
-            (!isSimulating && !isLoaded) && (
-              <div className="loading-container">
-                <h1 className="loading-text">
-                  Haven't run simulation yet
-                </h1>
-                <dotlottie-wc src="https://lottie.host/1403b53d-8e82-42af-9aff-7e401f56debd/4zBDEIwtaT.lottie" 
-                style={{ width: "300px", height: "300px" }} 
-                autoplay 
-                loop></dotlottie-wc>
-              </div>
-
-            )
+            (!isSimulating && !isLoaded) && <NotRunYet />
           }
           {
-            isSimulating && (
-              <div className="loading-container">
-                <h1 className="loading-text">Simulation running</h1>
-                <dotlottie-wc
-                  src="https://lottie.host/7f41cb68-5854-4d3c-b4f3-b2cfed73c0ab/Y5MttuHPtR.lottie"
-                  style={{ width: "250px", height: "250px" }} 
-                  autoplay
-                  loop
-                ></dotlottie-wc>
-                {/* <GridLoader /> */}
-              </div>
-            )
+            isSimulating && <LoadingResult />
           }
 
           <div className="plot-section">
@@ -105,6 +86,17 @@ const ResultSection = ({ isVisible, setIsVisible, data, isSimulating }) => {
           </div>
         </div>
       )}
+      {/* preload animation assets, possibly bad practice */}
+      <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+        <dotlottie-wc
+          src="https://lottie.host/1403b53d-8e82-42af-9aff-7e401f56debd/4zBDEIwtaT.lottie"
+        />
+      </div>
+      <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+        <dotlottie-wc
+          src="https://lottie.host/7f41cb68-5854-4d3c-b4f3-b2cfed73c0ab/Y5MttuHPtR.lottie"
+        />
+      </div>
     </>
   );
 };

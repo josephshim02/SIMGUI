@@ -3,28 +3,11 @@ import Drawflow from "drawflow";
 import "drawflow/dist/drawflow.min.css";
 import "./DrawflowEditor.css";
 import { checkRules } from "./rules";
-import ResultSection from "./ResultSection";
+import ResultSection from "./results/ResultSection.jsx";
 import ConnectionRulesPopup from './ConnectionRulesPopup';
-import { NODE_META, domainOptions, baseNodeTypes, groupedSidebar } from "../utils/drawflowConstants.js";
-import { cleanDrawflowData } from "../utils/drawflowUtils";
-
-async function sendToBackend(drawflowData, duration = 5) {
-  var drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
-  const cleanedData = cleanDrawflowData(drawFlowDict);
-  const simulationParameters = { 'time': duration};
-
-  cleanedData['drawflow']['simulation'] = simulationParameters;
-  console.log('Cleaned Data:', cleanedData);
-
-  const response = await fetch("http://localhost:8000/api/simulate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(cleanedData),
-  });
-  return response.json();
-}
+import { NODE_META, domainOptions, baseNodeTypes, groupedSidebar, wrap, ParamField, InitialValueField, SourceField } from "../utils/drawflowConstants.js";
+import { sendToBackend } from "../utils/drawflowUtils";
+import Modal from "./Modal.jsx";
 
 
 const DrawflowEditor = () => {
@@ -47,7 +30,7 @@ const DrawflowEditor = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   let [nodeCounter, setNodeCounter] = useState(1);
-  
+
   const checkNodeParams = () => {
     const data = editorRef.current.export();
     const usefulData = data.drawflow.Home.data;
@@ -140,255 +123,204 @@ const DrawflowEditor = () => {
 
 
 
-const addNodeToDrawFlow = (name, pos_x, pos_y) => {
-  if (!editorRef.current || editorRef.current.editor_mode === "fixed") {
-    return false;
-  }
+  const addNodeToDrawFlow = (name, pos_x, pos_y) => {
+    if (!editorRef.current || editorRef.current.editor_mode === "fixed") {
+      return false;
+    }
 
-  const editor = editorRef.current;
+    const editor = editorRef.current;
 
-  // Calculate position relative to canvas
-  pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) -
-    editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom));
-  pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
-    editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom));
-
-
-  // format of origin addNode: editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
-
-  // wrap of nodes, where each symbol has letter in a circle, have title and inner HTML
-  const wrap = (symbol, title, innerp = '', inneri = '') => `
-      <div>
-        <div class="title-box">
-          <span class="node-symbol">${symbol}</span> ${title}
-        </div>
-        ${innerp ? `<div class="box">${innerp}</div>` : ''}
-        ${inneri ? `<div class="box">${inneri}</div>` : ''}
-      </div>
-    `;
-
-  const ParamField =
-    `<p>Param:</p>
-    <input type="number"
-      id="param-${nodeCounter}"  // give unique id to each param input field
-      step="any" df-param placeholder="0.0"
-      style="width:80px;padding:2px;margin:2px;border:1px solid #ccc;border-radius:3px;"
-      onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.value)">
-    `;
-
-  const InitialValueField =
-    `<p>Initial Value:</p>
-    <input type="number"
-      id="initial-${nodeCounter}"  // give unique id to each initial value input field
-      step="any" df-initial placeholder="0.0"
-      style="width:80px;padding:2px;margin:2px;border:1px solid #ccc;border-radius:3px;"
-      onchange="this.parentNode.parentNode.parentNode.setAttribute('data-initial', this.value)">
-    `;
+    // Calculate position relative to canvas
+    pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) -
+      editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom));
+    pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
+      editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom));
 
 
-  const SourceField =
-    `<p>Input Type:</p>
-    <select class="styled-select" df-input-type
-      id="source-${nodeCounter}" 
-      style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
-      onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
-        <option param="unit-step">Unit Step Input</option>
-        <option param="sine-wave">Sine Wave Input</option>
-        <option param="square-wave">Square Wave Input</option>
-        <option param="sawtooth-wave">Sawtooth Wave Input</option>
-    </select>
-    `;
-  setNodeCounter(prev => prev + 1);
+    // format of origin addNode: editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
+    setNodeCounter(prev => prev + 1);
 
     // render inner HTML using meta data
     const renderNodeHTML = (name, meta, getLabel) => {
       console.log(meta.className === "e_store");
-      const innerp = meta.body === 'param' ? ParamField
-        : meta.body === 'source' ? SourceField
+      const innerp = meta.body === 'param' ? ParamField(nodeCounter)
+        : meta.body === 'source' ? SourceField(nodeCounter)
           : '';
       const inneri =
         (meta.className === 'e_store' || meta.className === 'ce_store') || meta.className === 'f_store'
-          ? InitialValueField
+          ? InitialValueField(nodeCounter)
           : '';
 
       return wrap(meta.symbol, getLabel(name), innerp, inneri);
     };
 
-  const m = NODE_META[name];
-  const defaultData =
-    m.body === "param"
-      ? { param: "1.0" }
-      : m.body === "source"
-        ? { input: { type: "Unit Step Input" } }
-        : {};
-  if (m) {
-    const html = renderNodeHTML(name, m, getLabel);
-    // editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
-    editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, defaultData, html);
-    return;
-  } else {
-    console.warn('Unknown node type:', name);
-    return;
-  }
-};
-
-
-
-
-const getLabel = (type) => {
-  if (!currDomain) {
-    return baseNodeTypes.find(n => n.type === type)?.defaultLabel ?? type;
-  }
-
-  return currDomain[type]
-    ?? baseNodeTypes.find(n => n.type === type)?.defaultLabel
-    ?? type;
-};
-
-const labels = React.useMemo(() => {
-  return {
-    refreshAll() {
-      const exp = drawflowAPI.exportJSON?.();
-      const mod = drawflowAPI.currentModule?.();
-      if (!exp || !mod) return;
-      const data = exp.drawflow?.[mod]?.data || {};
-      for (const idStr in data) {
-        const nodeName = data[idStr]?.name;
-        const meta = NODE_META[nodeName];
-        if (!meta) continue;
-        drawflowAPI.setNodeTitle(Number(idStr), meta.symbol, getLabel(nodeName));
-      }
+    const m = NODE_META[name];
+    const defaultData =
+      m.body === "param"
+        ? { param: "1.0" }
+        : m.body === "source"
+          ? { input: { type: "Unit Step Input" } }
+          : {};
+    if (m) {
+      const html = renderNodeHTML(name, m, getLabel);
+      // editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, {}, html);
+      editor.addNode(name, m.inputs, m.outputs, pos_x, pos_y, m.className, defaultData, html);
+      return;
+    } else {
+      console.warn('Unknown node type:', name);
+      return;
     }
   };
-}, [drawflowAPI, currDomain]);
-
-// lables refresh logic
-useEffect(() => {
-  if (!editorRef.current) return;
-  labels.refreshAll();
-}, [currDomain, labels]);
-
-const handleClearClick = () => {
-  const now = Date.now();
-  if (now <= clearConfirmUntilRef.current) {
-    clearConfirmUntilRef.current = 0;
-    drawflowAPI.clear();
-    notify('Canvas cleared.', 'success');
-  } else {
-    clearConfirmUntilRef.current = now + 2500;
-    notify('Press "Clear" again to confirm.', 'warning');
-  }
-};
 
 
-
-// event listeners
-const setupEventListeners = (editor) => {
-  editor.on("nodeCreated", (id) => {
-    console.log("Node created " + id);
-  });
-
-  editor.on("nodeRemoved", (id) => {
-    console.log("Node removed " + id);
-  });
-
-  editor.on("nodeSelected", (id) => {
-    console.log("Node selected " + id);
-  });
-
-  editor.on("moduleCreated", (name) => {
-    console.log("Module Created " + name);
-  });
-
-  editor.on("moduleChanged", (name) => {
-    console.log("Module Changed " + name);
-  });
-
-  editor.on('connectionCreated', (connection) => {
-
-    // Get the nodes involved in the connection
-    const outputNode = editor.getNodeFromId(connection.output_id);
-    const inputNode = editor.getNodeFromId(connection.input_id);
-
-    console.log(`Attempting to connect ${outputNode.name} to ${inputNode.name}`);
-
-    // Check if connection is allowed using rules.js
-    if (
-      checkRules(
-        editor,
-        outputNode.name,
-        inputNode.name,
-        connection.output_id,
-        connection.input_id
-      ) == false
-    ) {
-      // Remove the invalid connection
-      editor.removeSingleConnection(
-        connection.output_id,
-        connection.input_id,
-        connection.output_class,
-        connection.input_class
-      );
-
-      notify(
-        `Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`
-        , "error"
-      );
+  const getLabel = (type) => {
+    if (!currDomain) {
+      return baseNodeTypes.find(n => n.type === type)?.defaultLabel ?? type;
     }
-  });
 
-};
+    return currDomain[type]
+      ?? baseNodeTypes.find(n => n.type === type)?.defaultLabel
+      ?? type;
+  };
 
-const handleDragStart = (e, nodeType) => {
-  e.dataTransfer.setData("node", nodeType);
-};
+  const labels = React.useMemo(() => {
+    return {
+      refreshAll() {
+        const exp = drawflowAPI.exportJSON?.();
+        const mod = drawflowAPI.currentModule?.();
+        if (!exp || !mod) return;
+        const data = exp.drawflow?.[mod]?.data || {};
+        for (const idStr in data) {
+          const nodeName = data[idStr]?.name;
+          const meta = NODE_META[nodeName];
+          if (!meta) continue;
+          drawflowAPI.setNodeTitle(Number(idStr), meta.symbol, getLabel(nodeName));
+        }
+      }
+    };
+  }, [drawflowAPI, currDomain]);
 
-const handleDragOver = (e) => {
-  e.preventDefault();
-};
+  // lables refresh logic
+  useEffect(() => {
+    if (!editorRef.current) return;
+    labels.refreshAll();
+  }, [currDomain, labels]);
 
-const handleDrop = (e) => {
-  e.preventDefault();
-  const nodeType = e.dataTransfer.getData("node");
-  const rect = drawflowRef.current.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  addNodeToDrawFlow(nodeType, x, y);
-};
+  const handleClearClick = () => {
+    const now = Date.now();
+    if (now <= clearConfirmUntilRef.current) {
+      clearConfirmUntilRef.current = 0;
+      drawflowAPI.clear();
+      notify('Canvas cleared.', 'success');
+    } else {
+      clearConfirmUntilRef.current = now + 2500;
+      notify('Press "Clear" again to confirm.', 'warning');
+    }
+  };
 
 
-// TO DO:
-const simulate = async () => {
-  if (isSimulating) {
-    notify("Cannot submit another simulation while simulations is running");
-    return;
-  }
-  // QUESTION: Was this just here for debugging or is it necesary?
-  if (!editorRef.current) {
-    console.error("Editor not initialized");
-    return;
-  }
-  const drawflowData = editorRef.current.export();
-  const durationInput = document.getElementById('duration').value;
-  try {
-    setIsSimulating(true);
-    console.log("isSumlating: " + isSimulating);
-    // TO DO: Show loading state
-    
-    const result = await sendToBackend(drawflowData, durationInput);
-    console.log(result);
-    setData(result);
-    setIsVisible(1);
 
-  } catch (error) {
-    console.log(error);
-    notify(`Error connecting to backend: ${error.message}`, 'error');
-  } finally {
-    setIsSimulating(false);
-    console.log("isSumlating: " + isSimulating);
-    // TO DO: reset loading state
-  }
-};
+  // event listeners
+  const setupEventListeners = (editor) => {
+    editor.on("nodeCreated", (id) => {
+      console.log("Node created " + id);
+    });
+
+    editor.on("nodeRemoved", (id) => {
+      console.log("Node removed " + id);
+    });
+
+    editor.on("nodeSelected", (id) => {
+      console.log("Node selected " + id);
+    });
+
+    editor.on("moduleCreated", (name) => {
+      console.log("Module Created " + name);
+    });
+
+    editor.on("moduleChanged", (name) => {
+      console.log("Module Changed " + name);
+    });
+
+    editor.on('connectionCreated', (connection) => {
+
+      // Get the nodes involved in the connection
+      const outputNode = editor.getNodeFromId(connection.output_id);
+      const inputNode = editor.getNodeFromId(connection.input_id);
+
+      console.log(`Attempting to connect ${outputNode.name} to ${inputNode.name}`);
+
+      // Check if connection is allowed using rules.js
+      if (
+        checkRules(
+          editor,
+          outputNode.name,
+          inputNode.name,
+          connection.output_id,
+          connection.input_id
+        ) == false
+      ) {
+        // Remove the invalid connection
+        editor.removeSingleConnection(
+          connection.output_id,
+          connection.input_id,
+          connection.output_class,
+          connection.input_class
+        );
+
+        notify(
+          `Connection from ${outputNode.name} to ${inputNode.name} is not allowed.`
+          , "error"
+        );
+      }
+    });
+
+  };
+
+  const handleDragStart = (e, nodeType) => {
+    e.dataTransfer.setData("node", nodeType);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const nodeType = e.dataTransfer.getData("node");
+    const rect = drawflowRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    addNodeToDrawFlow(nodeType, x, y);
+  };
+
+
+  const simulate = async () => {
+    if (isSimulating) {
+      notify("Cannot submit another simulation while simulations is running");
+      return;
+    }
+    // QUESTION: Was this just here for debugging or is it necesary?
+    if (!editorRef.current) {
+      console.error("Editor not initialized");
+      return;
+    }
+    const drawflowData = editorRef.current.export();
+    const durationInput = document.getElementById('duration').value;
+    try {
+      setIsSimulating(true);
+      const result = await sendToBackend(drawflowData, durationInput);
+      console.log(result);
+      setData(result);
+      setIsVisible(1);
+
+    } catch (error) {
+      console.log(error);
+      notify(`Error connecting to backend: ${error.message}`, 'error');
+    } finally {
+      setIsSimulating(false);
+    }
+  };
 
 
 
@@ -398,16 +330,16 @@ const simulate = async () => {
       <header>
         <h2>SIMGUI</h2>
       </header>
-    {banner.visible && (
-      <div
-        className={`banner banner--${banner.type}`}
-        role={(banner.type === 'error' || banner.type === 'warning') ? 'alert' : 'status'}
-        aria-live="polite"
-      >
-        <span className="banner__text">{banner.message}</span>
-        <button className="banner__close" onClick={closeBanner} aria-label="Close notification">×</button>
-      </div>
-    )}
+      {banner.visible && (
+        <div
+          className={`banner banner--${banner.type}`}
+          role={(banner.type === 'error' || banner.type === 'warning') ? 'alert' : 'status'}
+          aria-live="polite"
+        >
+          <span className="banner__text">{banner.message}</span>
+          <button className="banner__close" onClick={closeBanner} aria-label="Close notification">×</button>
+        </div>
+      )}
 
       <div className="wrapper">
         <div className="col">
@@ -448,45 +380,27 @@ const simulate = async () => {
             </ul>
           </div>
 
-        <div
-          id="drawflow"
-          ref={drawflowRef}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-        >
+          <div
+            id="drawflow"
+            ref={drawflowRef}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+          >
+          </div>
         </div>
+        <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} data={data} isSimulating={isSimulating} />
       </div>
-      <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} data={data} isSimulating={isSimulating} />
 
+      {/* Modal */}
+      {
+        isModalOpen && <Modal 
+          onClose={() => closeModal()} 
+          onSimulate={() => simulate()}
+          onNotify = {() => notify('Simulation started!', 'info', 5000)}
+        />
+      }
     </div>
-
-    {/* Modal */}
-    {isModalOpen && (
-      <div
-        className="modal-overlay"
-        onClick={closeModal} // close when clicking outside
-      >
-        <div className="modal-content" onClick={e => e.stopPropagation()}>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            notify('Simulation started!', 'info', 5000);
-            simulate();
-            closeModal();
-          }}>
-            <h2>Choose simulation parameters</h2>
-            <label>
-              Duration:
-              <input id="duration" type="number" name="duration" defaultValue="5" required />
-            </label>
-
-            <button type="submit">Start Simulation</button>
-          </form>
-        </div>
-      </div>
-
-    )}
-  </div>
-);
+  );
 };
 
 export default DrawflowEditor;

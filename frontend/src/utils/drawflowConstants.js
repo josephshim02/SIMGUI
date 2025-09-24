@@ -80,3 +80,49 @@ export const groupedSidebar = [
     { title: 'Sources',   keys: ['se', 'sf'] },
     { title: 'Junctions', keys: ['f_junc', 'e_junc'] },
   ];
+
+// wrap of nodes, where each symbol has letter in a circle, have title and inner HTML
+export const wrap = (symbol, title, innerp = '', inneri = '') => 
+  `
+  <div>
+    <div class="title-box">
+      <span class="node-symbol">${symbol}</span> ${title}
+    </div>
+    ${innerp ? `<div class="box">${innerp}</div>` : ''}
+    ${inneri ? `<div class="box">${inneri}</div>` : ''}
+  </div>
+  `;
+
+export const ParamField = (nodeCounter) =>
+  `
+  <p>Param:</p>
+  <input type="number"
+    id="param-${nodeCounter}"  // give unique id to each param input field
+    step="any" df-param placeholder="0.0"
+    style="width:80px;padding:2px;margin:2px;border:1px solid #ccc;border-radius:3px;"
+    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.value)">
+  `;
+export const InitialValueField = (nodeCounter) =>
+  `
+  <p>Initial Value:</p>
+  <input type="number"
+    id="initial-${nodeCounter}"  // give unique id to each initial value input field
+    step="any" df-initial placeholder="0.0"
+    style="width:80px;padding:2px;margin:2px;border:1px solid #ccc;border-radius:3px;"
+    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-initial', this.value)">
+  `;
+
+
+export const SourceField = (nodeCounter) =>
+  `
+  <p>Input Type:</p>
+  <select class="styled-select" df-input-type
+    id="source-${nodeCounter}" 
+    style="width:150px;padding:4px;margin:2px;border:1px solid #ced4da;border-radius:3px;font-size:12px;background:white;"
+    onchange="this.parentNode.parentNode.parentNode.setAttribute('data-param', this.selectedOptions[0].getAttribute('param'))">
+      <option param="unit-step">Unit Step Input</option>
+      <option param="sine-wave">Sine Wave Input</option>
+      <option param="square-wave">Square Wave Input</option>
+      <option param="sawtooth-wave">Sawtooth Wave Input</option>
+  </select>
+  `;
