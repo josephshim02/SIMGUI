@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./PopUpResult.css";
 
+
 const PopUpResult = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -10,10 +11,6 @@ const PopUpResult = () => {
 
     return (
         <>
-            <button className="show-popup-button" onClick={handleOpen}>
-                Show Result
-            </button>
-            
             {isOpen && (
                 <div className="popup-overlay">
                     <div className="popup-content">
@@ -24,6 +21,7 @@ const PopUpResult = () => {
                         >
                             &times;
                         </button>
+
                     </div>
                 </div>
             )}

@@ -456,7 +456,7 @@ const simulate = async () => {
         >
         </div>
       </div>
-      <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} data={data} />
+      <ResultSection setIsVisible={setIsVisible} isVisible={isVisible} data={data} isSimulating={isSimulating} />
 
     </div>
 
