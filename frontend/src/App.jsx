@@ -3,8 +3,11 @@ import './App.css'
 
 function App() {
   return (
-    <div className="App">
-      <DrawflowEditor />
+    <div>
+      <div className="App">
+        <DrawflowEditor />
+      </div>
+      
     </div>
   )
 }

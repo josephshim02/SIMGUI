@@ -42,15 +42,7 @@
     /* remove object-fit (not applicable to div) */
 }
 
-.loading-text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 70vh;
-    font-size: 1.2rem;
-    color: #555;
-    text-align: center;
-}
+
 
 .toggle-button {
     padding: 10px 20px;
@@ -64,6 +56,30 @@
     right: 50px; /* 500px panel + 20px gutter (when panel present) */
     z-index: 1100;
     transition: right 220ms ease;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column; /* stack loader above text */
+  justify-content: center;
+  align-items: center;
+  min-height: 100%; /* or 100% if you want to fill parent */
+  gap: 5rem; /* spacing between loader and text */
+}
+
+.loading-text {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.pre-simulation-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    font-size: 1.5rem;
+    color: #555;
+    text-align: center;
 }
 
 /* fallback: on narrow screens move the toggle button closer to right edge */
