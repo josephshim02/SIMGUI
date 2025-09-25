@@ -55,8 +55,7 @@ function convert_drawflow_to_bondgraph(json_data::Dict{String, Any}; verbose::Bo
     end
 
 
-    drawflow_data = json_data["drawflow"]["Home"]["data"]
-    simulation_data = json_data["drawflow"]["simulation"]
+    drawflow_data = json_data["node_data"]
 
     if verbose
         println("Found $(length(drawflow_data)) nodes in the JSON file")

@@ -35,7 +35,7 @@ end
 
 function simulate(json_data)
   bg, enhanced_data = Main.DrawflowToBondGraph.convert_drawflow_to_bondgraph(json_data, verbose=true)
-  simulation_data = json_data["drawflow"]["simulation"]
+  simulation_data = json_data["simulation_data"]
   sol = Main.DrawflowToBondGraph.simulate_bondgraph(bg, simulation_data=simulation_data, verbose=true)
   solution_data = Main.DrawflowToBondGraph.save_solution_json(sol, include_metadata=true)
   return solution_data

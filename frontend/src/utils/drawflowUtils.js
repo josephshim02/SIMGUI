@@ -7,28 +7,27 @@ const INVALID_GRAPH = false;
  *Takes json object describing the state of the drawflow editor and transforms it into 
  *desired structure for backend to simulate
 */
-export function prepareDrawflowData(editorRef, verbose = false) {
+
+
+export function prepareDrawflowData(editorRef, simulationParameters) {
   const drawflowData = editorRef.current.export();
   const drawFlowDict = JSON.parse(JSON.stringify(drawflowData));
   const usefulData = drawFlowDict.drawflow.Home.data;
-  for (const node_id in usefulData) {
-    delete usefulData[node_id].html;
-    const meta = NODE_META[usefulData[node_id].name];
-    let param_dict = {};
-    if (meta.body === 'param') {
-      const element = editorRef.current.precanvas.querySelector(`#param-${node_id}`);
-      param_dict['parameters'] = element?.value ?? '';
-    } else if (meta.body === 'source') {
-      const element = editorRef.current.precanvas.querySelector(`#source-${node_id}`);
-      param_dict['source'] = element?.value ?? '';
-    }
-    usefulData[node_id].params = param_dict;
-    if (verbose) {
-      console.log('param_dict:', param_dict);
-    }
+  const sendData = {
+    "node_data": {},
+    "simulation_data": {}
   }
-  drawFlowDict.drawflow.Home.data = usefulData;
-  return drawFlowDict;
+  for (const node_id in usefulData) {
+    sendData.node_data[node_id] = {         // initialize the node object
+      class: usefulData[node_id].class,
+      data: usefulData[node_id].data,
+      inputs: usefulData[node_id].inputs,
+      outputs: usefulData[node_id].outputs,
+      id: usefulData[node_id].id
+    };
+  }
+  sendData.simulation_data = simulationParameters
+  return sendData;
 }
 
 export function checkInvalidGraph(editorRef) {
@@ -46,8 +45,8 @@ export function checkInvalidGraph(editorRef) {
 * ChatGPT generated
 */
 function checkGraphConnected(editorRef) {
-  const drawFlowDict = prepareDrawflowData(editorRef);
-  const nodes = drawFlowDict.drawflow.Home.data;
+  const drawFlowDict = prepareDrawflowData(editorRef, {});
+  const nodes = drawFlowDict.node_data;
   const nodeIds = Object.keys(nodes);
 
   if (nodeIds.length === 0) return true; // empty graph = trivially connected
@@ -123,11 +122,12 @@ function checkInvalidNodeparams(editorRef) {
 
 export async function sendToBackend(editorRef, duration = 5) {
   
-  const cleanedData = prepareDrawflowData(editorRef);
   const simulationParameters = { 'time': duration };
+  const cleanedData = prepareDrawflowData(editorRef,simulationParameters);
 
-  cleanedData['drawflow']['simulation'] = simulationParameters;
   console.log('Cleaned Data:', cleanedData);
+
+  //To download JSON as a file /////////////////////////////////////////////////////////////////
   // const blob = new Blob([JSON.stringify(cleanedData)], { type: "application/json" });
   // const url = URL.createObjectURL(blob);
 
