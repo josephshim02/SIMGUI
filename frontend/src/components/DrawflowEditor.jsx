@@ -6,7 +6,7 @@ import { checkRules } from "./rules";
 import ResultSection from "./results/ResultSection.jsx";
 import ConnectionRulesPopup from './ConnectionRulesPopup';
 import { NODE_META, domainOptions, baseNodeTypes, groupedSidebar, wrap, ParamField, InitialValueField, SourceField } from "../utils/drawflowConstants.js";
-import { sendToBackend } from "../utils/drawflowUtils";
+import { sendToBackend, checkInvalidGraph } from "../utils/drawflowUtils";
 import Modal from "./Modal.jsx";
 
 
@@ -31,20 +31,15 @@ const DrawflowEditor = () => {
   const closeModal = () => setIsModalOpen(false);
   let [nodeCounter, setNodeCounter] = useState(1);
 
-  const checkNodeParams = () => {
-    const data = editorRef.current.export();
-    const usefulData = data.drawflow.Home.data;
-    for (const node_id in usefulData) {
-      if (usefulData[node_id].name == 'e_store' || usefulData[node_id].name == 'ce_store') {
-        const element = document.getElementById(`initial-${node_id}`);
-        if (!element?.value) {
-          notify(`Please fill in the Initial Value for ${usefulData[node_id].name}`, "error");
-          return 0;
-        }
-      }
-    }
-    openModal();
-    return 1;
+  const openRunPopup = () => {
+    const graphIsInvalid = checkInvalidGraph(editorRef);
+    if (!graphIsInvalid) {
+      openModal();
+      return 1;
+    } else {
+      notify(graphIsInvalid, "error");
+      return 0
+    }    
   }
 
   useEffect(() => {
@@ -305,11 +300,10 @@ const DrawflowEditor = () => {
       console.error("Editor not initialized");
       return;
     }
-    const drawflowData = editorRef.current.export();
     const durationInput = document.getElementById('duration').value;
     try {
       setIsSimulating(true);
-      const result = await sendToBackend(drawflowData, durationInput);
+      const result = await sendToBackend(editorRef, durationInput);
       console.log(result);
       setData(result);
       setIsVisible(1);
@@ -359,7 +353,7 @@ const DrawflowEditor = () => {
         <div className={`col-right ${isVisible ? 'with-result' : ''}`}>
           <div className="menu">
             <ul>
-              <li className="run-menu-item" onClick={checkNodeParams}>Run</li>
+              <li className="run-menu-item" onClick={openRunPopup}>Run</li>
               <li onClick={handleClearClick}>Clear</li>
               <li>
                 Domain:
